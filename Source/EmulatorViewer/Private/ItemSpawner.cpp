@@ -10,8 +10,6 @@ AItemSpawner::AItemSpawner()
 
 	this->VisibleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisibleMesh"));
 	this->SetRootComponent(this->VisibleMesh);
-
-	this->OriginalScaleModifier = this->ScaleModifier;
 }
 
 // Called when the game starts or when spawned
@@ -19,7 +17,7 @@ void AItemSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//this->InitializeTimer();
+	this->InitializeTimer();
 }
 
 void AItemSpawner::InitializeTimer()
@@ -57,7 +55,7 @@ void AItemSpawner::SpawnItem()
 			this->ScaleModifier = FMath::RandRange(this->ScaleModifier, this->MaxScaleModifier);
 		}
 		
-		Transform.SetScale3D(FVector(this->ScaleModifier));
+		Transform.SetScale3D(FVector(this->BaseScaleModifier * this->ScaleModifier));
 
 		FActorSpawnParameters SpawnParameters;
 		AItem* ItemSpawned = GetWorld()->SpawnActor<AItem>(Item, Transform, SpawnParameters);
@@ -68,10 +66,5 @@ void AItemSpawner::PostEditChangeProperty(FPropertyChangedEvent& PropertyChanged
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	/*if (!this->bRandomizeScale)
-	{
-		this->ScaleModifier = this->OriginalScaleModifier;
-	}
-
-	this->InitializeTimer();*/
+	this->InitializeTimer();
 }

@@ -24,7 +24,10 @@ public:
 	bool bEnabled = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float ScaleModifier = 2.f;
+	float BaseScaleModifier = 2.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
+	float ScaleModifier = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
 	float SpawnRate = 1.f;
@@ -48,8 +51,6 @@ protected:
 private:
 
 	struct FTimerHandle SpawnTimerHandle;
-
-	float OriginalScaleModifier;
 
 	void SpawnItem();
 
