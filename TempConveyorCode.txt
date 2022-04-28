@@ -1,0 +1,226 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "Conveyor.generated.h"
+
+UCLASS()
+class AConveyor : public AActor
+{
+	GENERATED_BODY()
+	
+public:
+
+	AConveyor();
+
+	// Event called every physics tick and sub-step.
+	UFUNCTION(BlueprintNativeEvent)
+	void PhysicsTick(float SubstepDeltaTime);
+	virtual void PhysicsTick_Implementation(float SubstepDeltaTime);
+
+	// Custom physics Delegate
+	FCalculateCustomPhysics OnCalculateCustomPhysics;
+	void CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Conveyor)
+		UStaticMeshComponent* ConveyorMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Conveyor)
+		float speed = 200.0f;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+private:
+
+	FTransform originalTransform;
+	FVector originalLocation;
+	FBodyInstance* bodyInstance;
+};
+
+
+/*********************************************************************************************
+**********************************************************************************************
+**********************************************************************************************/
+
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "Conveyor.h"
+
+// Sets default values
+AConveyor::AConveyor()
+{
+	PrimaryActorTick.bCanEverTick = true;
+	ConveyorMesh = CreateDefaultSubobject<UStaticMeshComponent>("ConveyorMesh");
+	SetRootComponent(ConveyorMesh);
+	this->bodyInstance = ConveyorMesh->GetBodyInstance();
+	OnCalculateCustomPhysics.BindUObject(this, &AConveyor::CustomPhysics);
+}
+
+// Called when the game starts or when spawned
+void AConveyor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ConveyorMesh->SetSimulatePhysics(true);
+	originalTransform = bodyInstance->GetUnrealWorldTransform();
+	originalLocation = bodyInstance->GetUnrealWorldTransform().GetLocation();
+}
+
+// Called every frame
+void AConveyor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// Add custom physics on RootComponent's BodyInstance
+	if (this->bodyInstance != NULL) 
+	{
+		this->bodyInstance->AddCustomPhysics(OnCalculateCustomPhysics);
+	}
+}
+
+void AConveyor::PhysicsTick_Implementation(float SubstepDeltaTime) 
+{
+	bodyInstance->SetLinearVelocity(FVector(0,0,0), false, true);
+	ConveyorMesh->SetSimulatePhysics(false);
+	bodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
+	const FVector forward = bodyInstance->GetUnrealWorldTransform().GetUnitAxis(EAxis::X);
+
+	// Teleport backwards.
+	FTransform newTransform = originalTransform;
+	newTransform.SetTranslation(originalLocation - (forward * speed));
+	
+	bodyInstance->SetBodyTransform(newTransform, ETeleportType::TeleportPhysics, true);
+	
+	bodyInstance->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly, true);
+	
+	// Translate forward.
+	ConveyorMesh->SetSimulatePhysics(true);
+	bodyInstance->SetLinearVelocity(forward * speed, false, true);
+}
+
+void AConveyor::CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance) 
+{
+	PhysicsTick(DeltaTime);
+}
+
+/*********************************************************************************************
+**********************************************************************************************
+**********************************************************************************************/
+
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "TransportStraight.generated.h"
+
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class PROTOTYPING_API UTransportStraight : public UActorComponent
+{
+	GENERATED_BODY()
+
+public:	
+
+	// Constructor
+	UTransportStraight();
+
+	// Custom physics delegate
+	FCalculateCustomPhysics OnCalculateCustomPhysics;
+	void CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance);
+
+	// Event called every physics tick and sub-step.
+	UFUNCTION()
+	void PhysicsTick(float SubstepDeltaTime);
+	
+	UPROPERTY(EditAnywhere, Category = "Conveyor")
+	float Speed = 200.0f;
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+protected:
+
+	virtual void BeginPlay() override;
+
+private:
+
+	FTransform OriginalTransform;
+	FVector OriginalLocation;
+	FBodyInstance* ConveyorBodyInstance;
+	UStaticMeshComponent* ConveyorMesh;
+};
+
+/*********************************************************************************************
+**********************************************************************************************
+**********************************************************************************************/
+
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "TransportStraight.h"
+
+// Sets default values for this component's properties
+UTransportStraight::UTransportStraight()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
+
+	OnCalculateCustomPhysics.BindUObject(this, &UTransportStraight::CustomPhysics);
+}
+
+// Called when the game starts
+void UTransportStraight::BeginPlay()
+{
+	Super::BeginPlay();
+
+	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
+	this->ConveyorBodyInstance = this->ConveyorMesh->GetBodyInstance();
+
+	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
+	this->OriginalLocation = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetLocation();
+}
+
+// Called every frame
+void UTransportStraight::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// Add custom physics on RootComponent's BodyInstance
+	if (this->ConveyorBodyInstance) 
+	{
+		this->ConveyorBodyInstance->AddCustomPhysics(this->OnCalculateCustomPhysics);
+	}
+}
+
+void UTransportStraight::PhysicsTick(float SubstepDeltaTime)
+{
+	this->ConveyorMesh->SetSimulatePhysics(false);
+	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
+	const FVector Forward = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetUnitAxis(EAxis::X);
+
+	// Teleport backwards.
+	FTransform NewTransform = this->OriginalTransform;
+	NewTransform.SetTranslation(this->OriginalLocation - (Forward * Speed));
+	
+	this->ConveyorBodyInstance->SetBodyTransform(NewTransform, ETeleportType::TeleportPhysics, true);
+	
+	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly, true);
+	this->ConveyorMesh->SetSimulatePhysics(true);
+
+	// Translate forward.
+	this->ConveyorBodyInstance->SetLinearVelocity(Forward * Speed, false, true);
+}
+
+void UTransportStraight::CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance) 
+{
+	PhysicsTick(DeltaTime);
+}
