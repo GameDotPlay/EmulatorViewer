@@ -15,11 +15,11 @@ AConveyor::AConveyor()
 	this->SideStructL = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SideStructL"));
 	this->SideStructL->SetupAttachment(this->RootComponent);
 
-	this->SidePanL24in = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SidePanL24in"));
-	this->SidePanL24in->SetupAttachment(this->RootComponent);
+	this->SidePanL = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SidePanL"));
+	this->SidePanL->SetupAttachment(this->RootComponent);
 
-	this->SidePanR24in = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SidePanR24in"));
-	this->SidePanR24in->SetupAttachment(this->RootComponent);
+	this->SidePanR = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SidePanR"));
+	this->SidePanR->SetupAttachment(this->RootComponent);
 }
 
 // Called when the game starts or when spawned

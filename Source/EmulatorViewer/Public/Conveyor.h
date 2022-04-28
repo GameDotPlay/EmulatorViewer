@@ -25,17 +25,17 @@ protected:
 private:
 	
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* PhysicsMesh;
+	UStaticMeshComponent* PhysicsMesh = nullptr;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SideStructR;
+	UStaticMeshComponent* SideStructR = nullptr;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SideStructL;
+	UStaticMeshComponent* SideStructL = nullptr;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SidePanR24in;
+	UStaticMeshComponent* SidePanR = nullptr;
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SidePanL24in;
+	UStaticMeshComponent* SidePanL = nullptr;
 };
