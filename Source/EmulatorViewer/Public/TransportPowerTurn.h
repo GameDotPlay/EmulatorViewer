@@ -35,6 +35,7 @@ private:
 
 	FTransform OriginalTransform;
 	FRotator OriginalRotation;
+	FVector OriginalLocation;
 	FBodyInstance* ConveyorBodyInstance = nullptr;
 	UStaticMeshComponent* ConveyorMesh = nullptr;
 

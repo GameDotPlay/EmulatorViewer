@@ -22,6 +22,7 @@ void UTransportPowerTurn::BeginPlay()
 
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
 	this->OriginalRotation = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetRotation().Rotator();
+	this->OriginalLocation = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetLocation();
 
 	this->AngularMultiplier = 1 / (this->Radius * (PI / 180));
 }
@@ -42,34 +43,20 @@ void UTransportPowerTurn::PhysicsTick(float SubstepDeltaTime)
 {
 	//this->ConveyorMesh->SetSimulatePhysics(false);
 	//this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
-	//FVector Forward = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetUnitAxis(EAxis::X);
-	//FVector Backward = -this->ConveyorBodyInstance->GetUnrealWorldTransform().GetUnitAxis(EAxis::X);
+	//const FVector Forward = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetUnitAxis(EAxis::X);
 
-	//deltaRotation = Quaternion.Euler(((int)direction * Vector3.forward * angularMultiplier) * speed * Time.fixedDeltaTime);
-	//undoRotation = Quaternion.Euler(((int)direction * Vector3.back * angularMultiplier) * speed * Time.fixedDeltaTime);
-	//rb.rotation = rb.rotation * deltaRotation;
-	//rb.MoveRotation(rb.rotation * undoRotation);
+	FQuat DeltaRotation = FQuat::MakeFromEuler((-1.f * FVector(0.f, 0.f, 1.f) * AngularMultiplier) * Speed * SubstepDeltaTime);
+	FQuat UndoRotation = FQuat::MakeFromEuler((-1.f * -FVector(0.f, 0.f, 1.f) * AngularMultiplier) * Speed * SubstepDeltaTime);
 
-	//FQuat DeltaRotation = FQuat::MakeFromEuler((-1.f * Forward * AngularMultiplier) * Speed * SubstepDeltaTime);
-	//FQuat UndoRotation = FQuat::MakeFromEuler((1.f * Backward * AngularMultiplier) * this->Speed * SubstepDeltaTime);
+	FQuat CurrentRotation = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetRotation();
+	FTransform NewTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
+	NewTransform.SetRotation(CurrentRotation * DeltaRotation);
+	this->ConveyorBodyInstance->SetBodyTransform(NewTransform, ETeleportType::ResetPhysics);
 	
-	//UE_LOG(LogTemp, Warning, TEXT("DeltaRotation: <%f, %f, %f>"), DeltaRotation.Rotator().Pitch, DeltaRotation.Rotator().Yaw, DeltaRotation.Rotator().Roll);
+	//this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly, true);
+	//this->ConveyorMesh->SetSimulatePhysics(true);
 
-	// Teleport backwards rotation.
-	//FTransform NewTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
-	//NewTransform.SetLocation(OriginalTransform.GetTranslation());
-	//this->ConveyorBodyInstance->SetBodyTransform(NewTransform, ETeleportType::TeleportPhysics, true);
-
-	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly, true);
-	this->ConveyorMesh->SetSimulatePhysics(true);
-
-	// Set angular velocity.
-	FVector ForwardRotation = FVector(0.f, 0.f, 100.f);
-	ForwardRotation = FVector3d::DegreesToRadians(ForwardRotation);
-
-	UE_LOG(LogTemp, Warning, TEXT("ForwardRotation: <%f, %f, %f>"), ForwardRotation.X, ForwardRotation.Y, ForwardRotation.Z);
-
-	this->ConveyorBodyInstance->SetAngularVelocityInRadians(ForwardRotation, false);
+	//this->ConveyorBodyInstance->SetAngularVelocityInRadians(FVector(0.f, 0.f, 100.f * SubstepDeltaTime), false);
 }
 
 void UTransportPowerTurn::CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance)
