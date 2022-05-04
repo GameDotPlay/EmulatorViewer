@@ -1,6 +1,5 @@
 #include "TransportPowerTurn.h"
-
-#define PI 3.141592
+#include "DrawDebugHelpers.h"
 
 // Sets default values for this component's properties
 UTransportPowerTurn::UTransportPowerTurn()
@@ -17,14 +16,17 @@ void UTransportPowerTurn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
-	this->ConveyorBodyInstance = this->ConveyorMesh->GetBodyInstance();
-
+	// Cache references.
+	this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent())->GetBodyInstance();
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
-	this->OriginalRotation = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetRotation().Rotator();
-	this->OriginalLocation = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetLocation();
 
-	this->AngularMultiplier = 1 / (this->Radius * (PI / 180));
+	// Calculate radius of power turn. This affects the calculation of angular velocity depending on speed reference setting.
+	GetOwner()->GetActorBounds(true, BoundsOrigin, Bounds, false);
+
+	// Set center of mass equal to mesh origin.
+	FVector COMOffset = GetOwner()->GetActorLocation() - ConveyorBodyInstance->GetCOMPosition();
+	ConveyorBodyInstance->COMNudge = COMOffset;
+	ConveyorBodyInstance->UpdateMassProperties();
 }
 
 // Called every frame
@@ -37,26 +39,21 @@ void UTransportPowerTurn::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	{
 		this->ConveyorBodyInstance->AddCustomPhysics(this->OnCalculateCustomPhysics);
 	}
+
+	DrawDebugBox(GetWorld(), BoundsOrigin, Bounds, ConveyorBodyInstance->GetUnrealWorldTransform().GetRotation(), FColor::Green, false, -1.f, 0, 5.f);
 }
 
 void UTransportPowerTurn::PhysicsTick(float SubstepDeltaTime)
 {
-	//this->ConveyorMesh->SetSimulatePhysics(false);
-	//this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
-	//const FVector Forward = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetUnitAxis(EAxis::X);
+	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(false);
+	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
 
-	FQuat DeltaRotation = FQuat::MakeFromEuler((-1.f * FVector(0.f, 0.f, 1.f) * AngularMultiplier) * Speed * SubstepDeltaTime);
-	FQuat UndoRotation = FQuat::MakeFromEuler((-1.f * -FVector(0.f, 0.f, 1.f) * AngularMultiplier) * Speed * SubstepDeltaTime);
+	this->ConveyorBodyInstance->SetBodyTransform(OriginalTransform, ETeleportType::TeleportPhysics);
 
-	FQuat CurrentRotation = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetRotation();
-	FTransform NewTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
-	NewTransform.SetRotation(CurrentRotation * DeltaRotation);
-	this->ConveyorBodyInstance->SetBodyTransform(NewTransform, ETeleportType::ResetPhysics);
-	
-	//this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly, true);
-	//this->ConveyorMesh->SetSimulatePhysics(true);
+	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics, true);
+	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
 
-	//this->ConveyorBodyInstance->SetAngularVelocityInRadians(FVector(0.f, 0.f, 100.f * SubstepDeltaTime), false);
+	ConveyorBodyInstance->SetAngularVelocityInRadians(FVector(0.f, 0.f, 100.f * SubstepDeltaTime), false);
 }
 
 void UTransportPowerTurn::CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance)
