@@ -6,6 +6,12 @@
 #include "Components/ActorComponent.h"
 #include "TransportStraight.generated.h"
 
+UENUM()
+enum class EDirection : int32
+{
+	Forward = 1,
+	Reverse = -1
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class EMULATORVIEWER_API UTransportStraight : public UActorComponent
@@ -14,7 +20,6 @@ class EMULATORVIEWER_API UTransportStraight : public UActorComponent
 
 public:	
 
-	// Constructor
 	UTransportStraight();
 
 	// Custom physics delegate
@@ -24,11 +29,15 @@ public:
 	// Event called every physics tick and sub-step.
 	UFUNCTION()
 	void PhysicsTick(float SubstepDeltaTime);
+
+	// Called every rendering frame.
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
-	UPROPERTY(EditAnywhere, Category = "Conveyor")
+	UPROPERTY(EditAnywhere, Category = "Conveyor", DisplayName = "Speed (cm/s)")
 	float Speed = 200.0f;
 
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UPROPERTY(EditAnywhere, Category = "Conveyor")
+	EDirection Direction = EDirection::Forward;
 
 protected:
 
@@ -37,7 +46,8 @@ protected:
 private:
 
 	FTransform OriginalTransform;
-	FVector OriginalLocation;
 	FBodyInstance* ConveyorBodyInstance;
-	UStaticMeshComponent* ConveyorMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = "Conveyor", DisplayName = "Width (cm)")
+	float Width = 152.4f;
 };

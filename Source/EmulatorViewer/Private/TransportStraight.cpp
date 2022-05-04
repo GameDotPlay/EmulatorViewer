@@ -1,12 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "TransportStraight.h"
 
 // Sets default values for this component's properties
 UTransportStraight::UTransportStraight()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+	// Enable this component to tick every frame.
 	PrimaryComponentTick.bCanEverTick = true;
 
 	OnCalculateCustomPhysics.BindUObject(this, &UTransportStraight::CustomPhysics);
@@ -17,11 +14,9 @@ void UTransportStraight::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
-	this->ConveyorBodyInstance = this->ConveyorMesh->GetBodyInstance();
-
+	// Cache references.
+	this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent())->GetBodyInstance();
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
-	this->OriginalLocation = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetLocation();
 }
 
 // Called every frame
@@ -38,21 +33,17 @@ void UTransportStraight::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UTransportStraight::PhysicsTick(float SubstepDeltaTime)
 {
-	this->ConveyorMesh->SetSimulatePhysics(false);
+	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(false);
 	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
-	const FVector Forward = this->ConveyorBodyInstance->GetUnrealWorldTransform().GetUnitAxis(EAxis::X);
 
-	// Teleport backwards.
-	FTransform NewTransform = this->OriginalTransform;
-	NewTransform.SetTranslation(this->OriginalLocation - (Forward * Speed));
+	// Teleport to previous transform.
+	this->ConveyorBodyInstance->SetBodyTransform(this->OriginalTransform, ETeleportType::TeleportPhysics, true);
 	
-	this->ConveyorBodyInstance->SetBodyTransform(NewTransform, ETeleportType::TeleportPhysics, true);
-	
-	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly, true);
-	this->ConveyorMesh->SetSimulatePhysics(true);
+	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics, true);
+	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
 
 	// Translate forward.
-	this->ConveyorBodyInstance->SetLinearVelocity(Forward * Speed, false, true);
+	this->ConveyorBodyInstance->SetLinearVelocity((int32)this->Direction * FVector::ForwardVector * Speed, false, true);
 }
 
 void UTransportStraight::CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance) 
