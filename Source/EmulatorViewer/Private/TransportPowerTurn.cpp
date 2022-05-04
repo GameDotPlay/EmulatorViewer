@@ -4,10 +4,10 @@
 // Sets default values for this component's properties
 UTransportPowerTurn::UTransportPowerTurn()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+	// Enable this component to tick every frame.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	// Bind the custom physics tick.
 	OnCalculateCustomPhysics.BindUObject(this, &UTransportPowerTurn::CustomPhysics);
 }
 
@@ -21,9 +21,16 @@ void UTransportPowerTurn::BeginPlay()
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
 
 	// Calculate radius of power turn. This affects the calculation of angular velocity depending on speed reference setting.
+	FVector BoundsOrigin;
+	FVector Bounds;
 	GetOwner()->GetActorBounds(true, BoundsOrigin, Bounds, false);
+	OuterRadius = Bounds.Y * 2;
+	Radius.Emplace(OuterRadius - (Width * 0.95f));
+	Radius.Emplace(OuterRadius - (Width * 0.5f));
+	Radius.Emplace(OuterRadius - (Width * 0.05f));
+	AngularMultiplier = Speed / (Radius[(int32)SpeedReference]); // AngularVelocity = DesiredLinearSpeed / Radius;
 
-	// Set center of mass equal to mesh origin.
+	// Set center of mass equal to mesh origin. SetAngularVelocityInRadians() in PhysicsTick() always rotates around center of mass.
 	FVector COMOffset = GetOwner()->GetActorLocation() - ConveyorBodyInstance->GetCOMPosition();
 	ConveyorBodyInstance->COMNudge = COMOffset;
 	ConveyorBodyInstance->UpdateMassProperties();
@@ -39,8 +46,6 @@ void UTransportPowerTurn::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	{
 		this->ConveyorBodyInstance->AddCustomPhysics(this->OnCalculateCustomPhysics);
 	}
-
-	DrawDebugBox(GetWorld(), BoundsOrigin, Bounds, ConveyorBodyInstance->GetUnrealWorldTransform().GetRotation(), FColor::Green, false, -1.f, 0, 5.f);
 }
 
 void UTransportPowerTurn::PhysicsTick(float SubstepDeltaTime)
@@ -48,12 +53,14 @@ void UTransportPowerTurn::PhysicsTick(float SubstepDeltaTime)
 	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(false);
 	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
 
-	this->ConveyorBodyInstance->SetBodyTransform(OriginalTransform, ETeleportType::TeleportPhysics);
+	// Teleport to the previous transform.
+	this->ConveyorBodyInstance->SetBodyTransform(this->OriginalTransform, ETeleportType::TeleportPhysics);
 
 	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics, true);
 	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
 
-	ConveyorBodyInstance->SetAngularVelocityInRadians(FVector(0.f, 0.f, 100.f * SubstepDeltaTime), false);
+	// Rotate around the center of mass.
+	this->ConveyorBodyInstance->SetAngularVelocityInRadians((int32)this->Direction * FVector::DownVector * this->AngularMultiplier, false);
 }
 
 void UTransportPowerTurn::CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance)

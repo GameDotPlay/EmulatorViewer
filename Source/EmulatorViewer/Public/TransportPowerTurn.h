@@ -4,9 +4,6 @@
 #include "Components/ActorComponent.h"
 #include "TransportPowerTurn.generated.h"
 
-#define CENTIMETERS_TO_FEET 1 / 30.48
-#define CENTIMETERS_TO_INCHES 1 / 2.54
-
 UENUM()
 enum class ESpeedReference : int32
 {
@@ -16,7 +13,7 @@ enum class ESpeedReference : int32
 };
 
 UENUM()
-enum class EDirection : int32
+enum class EDirectionType : int32
 {
 	LeftTurn = 1,
 	RightTurn = -1
@@ -28,10 +25,10 @@ class EMULATORVIEWER_API UTransportPowerTurn : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
+
 	UTransportPowerTurn();
 
-	// Called every frame
+	// Called every rendering frame.
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	// Custom physics delegate
@@ -59,11 +56,10 @@ private:
 	FBodyInstance* ConveyorBodyInstance = nullptr;
 	float AngularMultiplier;
 	TArray<float> Radius;
-	FVector BoundsOrigin;
-	FVector Bounds;
+	float OuterRadius;
 
 	UPROPERTY(VisibleAnywhere, Category = "Conveyor")
-	EDirection Direction = EDirection::RightTurn;
+	EDirectionType Direction = EDirectionType::RightTurn;
 
 	UPROPERTY(VisibleAnywhere, Category = "Conveyor", DisplayName = "Width (cm)")
 	float Width = 152.4f;
