@@ -26,12 +26,10 @@ AConveyor::AConveyor()
 void AConveyor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AConveyor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
