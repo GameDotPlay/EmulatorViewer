@@ -31,7 +31,9 @@ void UTransportPowerTurn::BeginPlay()
 	AngularMultiplier = Speed / (Radius[(int32)SpeedReference]); // AngularVelocity = DesiredLinearSpeed / Radius;
 
 	// Set center of mass equal to mesh origin. SetAngularVelocityInRadians() in PhysicsTick() always rotates around center of mass.
-	FVector COMOffset = GetOwner()->GetActorLocation() - ConveyorBodyInstance->GetCOMPosition();
+	FVector COMOffset = (OriginalTransform.GetLocation() - ConveyorBodyInstance->GetCOMPosition());
+	FRotator Rotation = OriginalTransform.GetRotation().Rotator();
+	COMOffset = COMOffset.RotateAngleAxis(-Rotation.Yaw, FVector::UpVector); // Remove any rotation the mesh may have from the calculation of COMOffset.
 	ConveyorBodyInstance->COMNudge = COMOffset;
 	ConveyorBodyInstance->UpdateMassProperties();
 }
@@ -50,14 +52,14 @@ void UTransportPowerTurn::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UTransportPowerTurn::PhysicsTick(float SubstepDeltaTime)
 {
-	//this->ConveyorBodyInstance->SetInstanceSimulatePhysics(false);
-	//this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
+	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(false);
+	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
 
 	// Teleport to the previous transform.
-	//this->ConveyorBodyInstance->SetBodyTransform(this->OriginalTransform, ETeleportType::TeleportPhysics);
+	this->ConveyorBodyInstance->SetBodyTransform(this->OriginalTransform, ETeleportType::TeleportPhysics);
 
-	//this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics, true);
-	//this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
+	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics, true);
+	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
 
 	// Rotate around the center of mass.
 	this->ConveyorBodyInstance->SetAngularVelocityInRadians((int32)this->Direction * FVector::DownVector * this->AngularMultiplier, false);
