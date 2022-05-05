@@ -50,14 +50,14 @@ void UTransportPowerTurn::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UTransportPowerTurn::PhysicsTick(float SubstepDeltaTime)
 {
-	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(false);
-	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
+	//this->ConveyorBodyInstance->SetInstanceSimulatePhysics(false);
+	//this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::NoCollision, true);
 
 	// Teleport to the previous transform.
-	this->ConveyorBodyInstance->SetBodyTransform(this->OriginalTransform, ETeleportType::TeleportPhysics);
+	//this->ConveyorBodyInstance->SetBodyTransform(this->OriginalTransform, ETeleportType::TeleportPhysics);
 
-	this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics, true);
-	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
+	//this->ConveyorBodyInstance->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics, true);
+	//this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
 
 	// Rotate around the center of mass.
 	this->ConveyorBodyInstance->SetAngularVelocityInRadians((int32)this->Direction * FVector::DownVector * this->AngularMultiplier, false);
