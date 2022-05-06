@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "EmulatorCharacter.generated.h"
+#include "EmulatorFPCharacter.generated.h"
 
 UCLASS()
-class EMULATORVIEWER_API AEmulatorCharacter : public ACharacter
+class EMULATORVIEWER_API AEmulatorFPCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AEmulatorCharacter();
+	AEmulatorFPCharacter();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
