@@ -9,6 +9,7 @@ AEmulatorCharacter::AEmulatorCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	this->Camera->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -30,4 +31,19 @@ void AEmulatorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis("MoveForward", this, &AEmulatorCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("StrafeRight", this, &AEmulatorCharacter::StrafeRight);
+
+	PlayerInputComponent->BindAxis("LookRight", this, &AEmulatorCharacter::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &AEmulatorCharacter::AddControllerPitchInput);
+}
+
+void AEmulatorCharacter::MoveForward(float Value)
+{
+	AddMovementInput(GetActorForwardVector(), Value);
+}
+
+void AEmulatorCharacter::StrafeRight(float Value)
+{
+	AddMovementInput(GetActorRightVector(), Value);
 }
