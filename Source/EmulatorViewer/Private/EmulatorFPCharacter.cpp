@@ -55,6 +55,7 @@ void AEmulatorFPCharacter::StrafeRight(float Value)
 
 void AEmulatorFPCharacter::AddPitch(float Value)
 {
+	// Inverted Y axis hard coded.
 	AddControllerPitchInput(-Value);
 }
 
