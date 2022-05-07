@@ -27,10 +27,18 @@ protected:
 
 private:
 
+	float OriginalWalkSpeed;
+
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
 
 	void MoveForward(float Value);
 
 	void StrafeRight(float Value);
+
+	void AddPitch(float Value);
+
+	void DoubleSpeed();
+
+	void NormalSpeed();
 };

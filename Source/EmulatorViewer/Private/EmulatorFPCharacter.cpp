@@ -1,6 +1,7 @@
 
 #include "EmulatorFPCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AEmulatorFPCharacter::AEmulatorFPCharacter()
@@ -17,6 +18,7 @@ void AEmulatorFPCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	this-> OriginalWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
 // Called every frame
@@ -31,11 +33,14 @@ void AEmulatorFPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &AEmulatorFPCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("StrafeRight", this, &AEmulatorFPCharacter::StrafeRight);
+	PlayerInputComponent->BindAxis("ForwardAxis", this, &AEmulatorFPCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("RightAxis", this, &AEmulatorFPCharacter::StrafeRight);
 
-	PlayerInputComponent->BindAxis("LookRight", this, &AEmulatorFPCharacter::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("LookUp", this, &AEmulatorFPCharacter::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("MouseX", this, &AEmulatorFPCharacter::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("MouseY", this, &AEmulatorFPCharacter::AddPitch);
+
+	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Pressed, this, &AEmulatorFPCharacter::DoubleSpeed);
+	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Released, this, &AEmulatorFPCharacter::NormalSpeed);
 }
 
 void AEmulatorFPCharacter::MoveForward(float Value)
@@ -46,4 +51,19 @@ void AEmulatorFPCharacter::MoveForward(float Value)
 void AEmulatorFPCharacter::StrafeRight(float Value)
 {
 	AddMovementInput(GetActorRightVector(), Value);
+}
+
+void AEmulatorFPCharacter::AddPitch(float Value)
+{
+	AddControllerPitchInput(-Value);
+}
+
+void AEmulatorFPCharacter::DoubleSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed *= 2;
+}
+
+void AEmulatorFPCharacter::NormalSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed = this->OriginalWalkSpeed;
 }
