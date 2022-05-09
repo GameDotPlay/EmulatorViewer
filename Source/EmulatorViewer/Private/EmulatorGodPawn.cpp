@@ -40,10 +40,6 @@ void AEmulatorGodPawn::Tick(float DeltaTime)
 	check(this->PlayerController);
 	this->PlayerController->GetMousePosition(this->MousePosition.X, this->MousePosition.Y);
 
-	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation() + FVector(0, 0, 100.f), GetActorLocation() + GetActorForwardVector() * 100.f + FVector(0, 0, 100.f), 10.f, FColor::Red, false, -1.f, 0, 5.f);
-	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation() + FVector(0, 0, 100.f), GetActorLocation() + GetActorRightVector() * 100.f + FVector(0, 0, 100.f), 10.f, FColor::Green, false, -1.f, 0, 5.f);
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *GetActorRotation().ToString());
-
 	this->MouseEdgeScroll(DeltaTime);
 }
 
@@ -58,11 +54,17 @@ void AEmulatorGodPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Pressed, this, &AEmulatorGodPawn::MiddleMousePressed);
 	PlayerInputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Released, this, &AEmulatorGodPawn::MiddleMouseReleased);
+	PlayerInputComponent->BindAction("LeftMouseButton", EInputEvent::IE_Released, this, &AEmulatorGodPawn::LeftClickSelect);
 	PlayerInputComponent->BindAction("KeyboardF", EInputEvent::IE_Pressed, this, &AEmulatorGodPawn::FocusView);
 }
 
 void AEmulatorGodPawn::MouseEdgeScroll(float DeltaTime)
 {
+	if (this->bMiddleMousePressed)
+	{
+		return;
+	}
+
 	float PreviousZ = GetActorLocation().Z;
 	if (this->MousePosition.X > this->CurrentViewportSize.X - this->ScreenEdgeBuffer)
 	{
@@ -93,6 +95,21 @@ void AEmulatorGodPawn::MouseEdgeScroll(float DeltaTime)
 	}
 }
 
+void AEmulatorGodPawn::LeftClickSelect()
+{
+	FHitResult HitResult;
+	this->PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+
+	if (HitResult.GetActor())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *HitResult.GetActor()->GetActorNameOrLabel());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit returned null"));
+	}
+}
+
 void AEmulatorGodPawn::MiddleMousePressed()
 {
 	this->bMiddleMousePressed = true;
@@ -112,7 +129,8 @@ void AEmulatorGodPawn::RotateMouseX(float Value)
 			Value = -Value;
 		}
 
-		AddActorLocalRotation(FRotator(0.f, Value * MouseRotateSpeed, 0.f).Quaternion());
+		FQuat DeltaRotation = FRotator(0.f, Value * MouseRotateSpeed * GetWorld()->GetDeltaSeconds(), 0.f).Quaternion();
+		AddActorWorldRotation(DeltaRotation);
 		SetActorRelativeRotation(FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, 0.f));
 	}
 }
@@ -126,7 +144,8 @@ void AEmulatorGodPawn::RotateMouseY(float Value)
 			Value = -Value;
 		}
 
-		AddActorLocalRotation(FRotator(Value * MouseRotateSpeed, 0.f, 0.f).Quaternion());
+		FQuat DeltaRotation = FRotator(Value * MouseRotateSpeed * GetWorld()->GetDeltaSeconds(), 0.f, 0.f).Quaternion();
+		AddActorWorldRotation(DeltaRotation);
 		SetActorRelativeRotation(FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, 0.f));
 
 		if (GetActorRotation().Pitch > this->MaxPitchValue)
@@ -142,7 +161,7 @@ void AEmulatorGodPawn::RotateMouseY(float Value)
 
 void AEmulatorGodPawn::FocusView()
 {
-
+	
 }
 
 void AEmulatorGodPawn::Zoom(float Value)

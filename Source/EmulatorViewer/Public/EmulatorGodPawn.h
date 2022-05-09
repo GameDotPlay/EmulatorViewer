@@ -46,7 +46,7 @@ private:
 	int32 ScreenEdgeBuffer = 50.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MouseEdgeScrollSpeed = 1000.f;
+	float MouseEdgeScrollSpeed = 2000.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	bool bInvertMouseX = false;
@@ -61,7 +61,7 @@ private:
 	float MaxPitchValue = 80.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MouseRotateSpeed = 3.f;
+	float MouseRotateSpeed = 100.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MouseWheelSensitivity = 100.f;
@@ -72,9 +72,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MaxTargetArmLength = 2700.f;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	float WorldMinZ = 1.f;
+
 	bool bMiddleMousePressed = false;
 
 	class AEmulatorPlayerController* PlayerController;
+
+	AActor* LastSelected = nullptr;
 
 	FVector2D MousePosition;
 
@@ -93,4 +98,6 @@ private:
 	void Zoom(float Value);
 
 	void MouseEdgeScroll(float DeltaTime);
+
+	void LeftClickSelect();
 };
