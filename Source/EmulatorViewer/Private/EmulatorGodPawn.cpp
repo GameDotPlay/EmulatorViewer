@@ -40,9 +40,11 @@ void AEmulatorGodPawn::Tick(float DeltaTime)
 	check(this->PlayerController);
 	this->PlayerController->GetMousePosition(this->MousePosition.X, this->MousePosition.Y);
 
-	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation() + FVector(0, 0, 100.f), GetActorLocation() + GetActorForwardVector() * 100.f, 10.f, FColor::Red, false, -1.f, 0, 5.f);
+	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation() + FVector(0, 0, 100.f), GetActorLocation() + GetActorForwardVector() * 100.f + FVector(0, 0, 100.f), 10.f, FColor::Red, false, -1.f, 0, 5.f);
+	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation() + FVector(0, 0, 100.f), GetActorLocation() + GetActorRightVector() * 100.f + FVector(0, 0, 100.f), 10.f, FColor::Green, false, -1.f, 0, 5.f);
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), *GetActorRotation().ToString());
 
-	this->MouseEdgeScroll();
+	this->MouseEdgeScroll(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -59,36 +61,34 @@ void AEmulatorGodPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("KeyboardF", EInputEvent::IE_Pressed, this, &AEmulatorGodPawn::FocusView);
 }
 
-void AEmulatorGodPawn::MouseEdgeScroll()
+void AEmulatorGodPawn::MouseEdgeScroll(float DeltaTime)
 {
 	float PreviousZ = GetActorLocation().Z;
 	if (this->MousePosition.X > this->CurrentViewportSize.X - this->ScreenEdgeBuffer)
 	{
-		FVector RightVector = GetActorRightVector();
-		AddActorLocalOffset(RightVector * this->MouseEdgeScrollSpeed);
+		FVector DeltaLocation = FVector(GetActorRightVector() * this->MouseEdgeScrollSpeed * DeltaTime);
+		AddActorWorldOffset(DeltaLocation);
 		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
 	}
 
 	if (this->MousePosition.Y > this->CurrentViewportSize.Y - this->ScreenEdgeBuffer)
 	{
-		FVector ForwardVector = GetActorForwardVector();
-		ForwardVector.RotateAngleAxis(-GetActorRotation().Pitch, GetActorRightVector()).Normalize();
-		AddActorLocalOffset(-ForwardVector * this->MouseEdgeScrollSpeed);
+		FVector DeltaLocation = FVector(-GetActorForwardVector() * this->MouseEdgeScrollSpeed * DeltaTime);
+		AddActorWorldOffset(DeltaLocation);
 		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
 	}
 
 	if (this->MousePosition.X < this->ScreenEdgeBuffer)
 	{
-		FVector RightVector = GetActorRightVector();
-		AddActorLocalOffset(-RightVector * this->MouseEdgeScrollSpeed);
+		FVector DeltaLocation = FVector(-GetActorRightVector() * this->MouseEdgeScrollSpeed * DeltaTime);
+		AddActorWorldOffset(DeltaLocation);
 		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
 	}
 
 	if (this->MousePosition.Y < this->ScreenEdgeBuffer)
 	{
-		FVector ForwardVector = GetActorForwardVector();
-		ForwardVector.RotateAngleAxis(-GetActorRotation().Pitch, GetActorRightVector()).Normalize();
-		AddActorLocalOffset(ForwardVector * this->MouseEdgeScrollSpeed);
+		FVector DeltaLocation = FVector(GetActorForwardVector() * this->MouseEdgeScrollSpeed * DeltaTime);
+		AddActorWorldOffset(DeltaLocation);
 		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
 	}
 }

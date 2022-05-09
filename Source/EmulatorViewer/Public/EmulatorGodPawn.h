@@ -46,7 +46,7 @@ private:
 	int32 ScreenEdgeBuffer = 50.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MouseEdgeScrollSpeed = 10.f;
+	float MouseEdgeScrollSpeed = 1000.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	bool bInvertMouseX = false;
@@ -92,5 +92,5 @@ private:
 
 	void Zoom(float Value);
 
-	void MouseEdgeScroll();
+	void MouseEdgeScroll(float DeltaTime);
 };
