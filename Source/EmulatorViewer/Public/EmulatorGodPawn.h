@@ -43,7 +43,7 @@ private:
 	class UCameraComponent* Camera;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	int32 ScreenEdgeBuffer = 25.f;
+	int32 ScreenEdgeBuffer = 10.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MouseEdgeScrollSpeed = 2000.f;
