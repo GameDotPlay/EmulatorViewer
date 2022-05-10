@@ -99,5 +99,9 @@ private:
 
 	void MouseEdgeScroll(float DeltaTime);
 
+	void MoveForward(float Value);
+
+	void MoveRight(float Value);
+
 	void LeftClickSelect();
 };

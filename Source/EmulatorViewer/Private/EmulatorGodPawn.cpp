@@ -51,6 +51,8 @@ void AEmulatorGodPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MouseWheel", this, &AEmulatorGodPawn::Zoom);
 	PlayerInputComponent->BindAxis("MouseX", this, &AEmulatorGodPawn::RotateMouseX);
 	PlayerInputComponent->BindAxis("MouseY", this, &AEmulatorGodPawn::RotateMouseY);
+	PlayerInputComponent->BindAxis("ForwardAxis", this, &AEmulatorGodPawn::MoveForward);
+	PlayerInputComponent->BindAxis("RightAxis", this, &AEmulatorGodPawn::MoveRight);
 
 	PlayerInputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Pressed, this, &AEmulatorGodPawn::MiddleMousePressed);
 	PlayerInputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Released, this, &AEmulatorGodPawn::MiddleMouseReleased);
@@ -95,6 +97,24 @@ void AEmulatorGodPawn::MouseEdgeScroll(float DeltaTime)
 	}
 }
 
+void AEmulatorGodPawn::MoveForward(float Value)
+{
+	float PreviousZ = GetActorLocation().Z;
+	float DeltaSeconds = GetWorld()->GetDeltaSeconds();
+	FVector DeltaLocation = FVector(GetActorForwardVector() * Value * this->MouseEdgeScrollSpeed * DeltaSeconds);
+	AddActorWorldOffset(DeltaLocation);
+	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
+}
+
+void AEmulatorGodPawn::MoveRight(float Value)
+{
+	float PreviousZ = GetActorLocation().Z;
+	float DeltaSeconds = GetWorld()->GetDeltaSeconds();
+	FVector DeltaLocation = FVector(GetActorRightVector() * Value * this->MouseEdgeScrollSpeed * DeltaSeconds);
+	AddActorWorldOffset(DeltaLocation);
+	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
+}
+
 void AEmulatorGodPawn::LeftClickSelect()
 {
 	FHitResult HitResult;
@@ -102,11 +122,11 @@ void AEmulatorGodPawn::LeftClickSelect()
 
 	if (HitResult.GetActor())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *HitResult.GetActor()->GetActorNameOrLabel());
+		UE_LOG(LogTemp, Warning, TEXT("Clicked: %s"), *HitResult.GetActor()->GetActorNameOrLabel());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit returned null"));
+		UE_LOG(LogTemp, Warning, TEXT("Clicked hit returned null"));
 	}
 }
 
