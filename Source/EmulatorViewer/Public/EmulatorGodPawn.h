@@ -43,7 +43,7 @@ private:
 	class UCameraComponent* Camera;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	int32 ScreenEdgeBuffer = 50.f;
+	int32 ScreenEdgeBuffer = 25.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MouseEdgeScrollSpeed = 2000.f;
@@ -61,7 +61,7 @@ private:
 	float MaxPitchValue = 80.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MouseRotateSpeed = 100.f;
+	float MouseRotateSpeed = 300.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MouseWheelSensitivity = 100.f;
