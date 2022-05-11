@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "EmulatorPlayerController.h"
 #include "DrawDebugHelpers.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 AEmulatorGodPawn::AEmulatorGodPawn()
@@ -12,11 +13,11 @@ AEmulatorGodPawn::AEmulatorGodPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	this->LookTarget = CreateDefaultSubobject<USceneComponent>("LookTarget");
+	this->LookTarget = CreateDefaultSubobject<USphereComponent>("LookTarget");
 	this->SetRootComponent(this->LookTarget);
 
 	this->SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
-	this->SpringArm->SetupAttachment(this->LookTarget);
+	this->SpringArm->SetupAttachment(this->RootComponent);
 
 	this->Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	this->Camera->SetupAttachment(this->SpringArm);
@@ -40,7 +41,10 @@ void AEmulatorGodPawn::Tick(float DeltaTime)
 	check(this->PlayerController);
 	this->PlayerController->GetMousePosition(this->MousePosition.X, this->MousePosition.Y);
 
-	this->MouseEdgeScroll(DeltaTime);
+	if (this->bMouseEdgeScrollEnabled && !this->bMiddleMousePressed)
+	{
+		this->MouseEdgeScroll();
+	}
 }
 
 // Called to bind functionality to input
@@ -60,40 +64,26 @@ void AEmulatorGodPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("KeyboardF", EInputEvent::IE_Pressed, this, &AEmulatorGodPawn::FocusView);
 }
 
-void AEmulatorGodPawn::MouseEdgeScroll(float DeltaTime)
+void AEmulatorGodPawn::MouseEdgeScroll()
 {
-	if (this->bMiddleMousePressed)
-	{
-		return;
-	}
-
-	float PreviousZ = GetActorLocation().Z;
 	if (this->MousePosition.X > this->CurrentViewportSize.X - this->ScreenEdgeBuffer)
 	{
-		FVector DeltaLocation = FVector(GetActorRightVector() * this->MouseEdgeScrollSpeed * DeltaTime);
-		AddActorWorldOffset(DeltaLocation);
-		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
+		this->MoveRight(1.f);
 	}
 
 	if (this->MousePosition.Y > this->CurrentViewportSize.Y - this->ScreenEdgeBuffer)
 	{
-		FVector DeltaLocation = FVector(-GetActorForwardVector() * this->MouseEdgeScrollSpeed * DeltaTime);
-		AddActorWorldOffset(DeltaLocation);
-		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
+		this->MoveForward(-1.f);
 	}
 
 	if (this->MousePosition.X < this->ScreenEdgeBuffer)
 	{
-		FVector DeltaLocation = FVector(-GetActorRightVector() * this->MouseEdgeScrollSpeed * DeltaTime);
-		AddActorWorldOffset(DeltaLocation);
-		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
+		this->MoveRight(-1.f);
 	}
 
 	if (this->MousePosition.Y < this->ScreenEdgeBuffer)
 	{
-		FVector DeltaLocation = FVector(GetActorForwardVector() * this->MouseEdgeScrollSpeed * DeltaTime);
-		AddActorWorldOffset(DeltaLocation);
-		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
+		this->MoveForward(1.f);
 	}
 }
 
@@ -119,9 +109,14 @@ void AEmulatorGodPawn::LeftClickSelect()
 {
 	FHitResult HitResult;
 	this->PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	AActor* HitActor = HitResult.GetActor();
 
-	if (HitResult.GetActor())
+	if (HitActor)
 	{
+		FVector HitActorExtents;
+		FVector HitActorOrigin;
+		HitActor->GetActorBounds(true, HitActorOrigin, HitActorExtents, true);
+		DrawDebugString(GetWorld(), HitActorOrigin + FVector(0, 0, 100), FString(*HitResult.GetActor()->GetActorNameOrLabel()), nullptr, FColor::Yellow, 1.f, true, 2.f);
 		UE_LOG(LogTemp, Warning, TEXT("Clicked: %s"), *HitResult.GetActor()->GetActorNameOrLabel());
 	}
 	else
@@ -150,7 +145,7 @@ void AEmulatorGodPawn::RotateMouseX(float Value)
 		}
 
 		FQuat DeltaRotation = FRotator(0.f, Value * MouseRotateSpeed * GetWorld()->GetDeltaSeconds(), 0.f).Quaternion();
-		AddActorWorldRotation(DeltaRotation);
+		AddActorLocalRotation(DeltaRotation);
 		SetActorRelativeRotation(FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, 0.f));
 	}
 }
@@ -165,7 +160,7 @@ void AEmulatorGodPawn::RotateMouseY(float Value)
 		}
 
 		FQuat DeltaRotation = FRotator(Value * MouseRotateSpeed * GetWorld()->GetDeltaSeconds(), 0.f, 0.f).Quaternion();
-		AddActorWorldRotation(DeltaRotation);
+		AddActorLocalRotation(DeltaRotation);
 		SetActorRelativeRotation(FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, 0.f));
 
 		if (GetActorRotation().Pitch > this->MaxPitchValue)

@@ -33,15 +33,6 @@ protected:
 
 private:
 
-	UPROPERTY(VisibleAnywhere)
-	class USceneComponent* LookTarget;
-
-	UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent* SpringArm;
-
-	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* Camera;
-
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	int32 ScreenEdgeBuffer = 10.f;
 
@@ -58,10 +49,10 @@ private:
 	float MinPitchValue = -10.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MaxPitchValue = 80.f;
+	float MaxPitchValue = 55.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MouseRotateSpeed = 300.f;
+	float MouseRotateSpeed = 200.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MouseWheelSensitivity = 100.f;
@@ -70,10 +61,22 @@ private:
 	float MinTargetArmLength = 200.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MaxTargetArmLength = 2700.f;
+	float MaxTargetArmLength = 2500.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float WorldMinZ = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	bool bMouseEdgeScrollEnabled = true;
+
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* LookTarget;
+
+	UPROPERTY(VisibleAnywhere)
+	class USpringArmComponent* SpringArm;
+
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* Camera;
 
 	bool bMiddleMousePressed = false;
 
@@ -97,7 +100,7 @@ private:
 
 	void Zoom(float Value);
 
-	void MouseEdgeScroll(float DeltaTime);
+	void MouseEdgeScroll();
 
 	void MoveForward(float Value);
 
