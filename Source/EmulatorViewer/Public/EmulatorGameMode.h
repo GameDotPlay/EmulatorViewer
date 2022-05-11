@@ -14,4 +14,12 @@ class EMULATORVIEWER_API AEmulatorGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+
+protected:
+
+	virtual void BeginPlay() override;
+
+private:
+
 };
