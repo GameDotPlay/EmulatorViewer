@@ -4,6 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "TransportPowerTurn.generated.h"
 
+#define CENTIMETERSTOFEET 1.f / 30.48f
+
 UENUM()
 enum class ESpeedReference : int32
 {
@@ -44,6 +46,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Conveyor")
 	ESpeedReference SpeedReference = ESpeedReference::Middle;
+
+	float GetSpeedFPM() const { return this->Speed * CENTIMETERSTOFEET; }
 
 protected:
 

@@ -1,10 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "TransportStraight.generated.h"
+
+#define CENTIMETERSTOFEET 1.f / 30.48f
 
 UENUM()
 enum class EDirection : int32
@@ -38,6 +40,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Conveyor")
 	EDirection Direction = EDirection::Forward;
+
+	float GetSpeedFPM() const { return this->Speed * CENTIMETERSTOFEET; }
 
 protected:
 
