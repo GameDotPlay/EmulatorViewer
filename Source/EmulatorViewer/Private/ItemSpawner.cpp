@@ -1,3 +1,4 @@
+
 #include "ItemSpawner.h"
 #include "Item.h"
 #include "TimerManager.h"
@@ -22,6 +23,11 @@ void AItemSpawner::BeginPlay()
 
 void AItemSpawner::InitializeTimer()
 {
+	if (!GetWorld())
+	{
+		return;
+	}
+
 	if (GetWorld()->bShouldSimulatePhysics)
 	{
 		if (this->bEnabled)
