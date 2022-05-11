@@ -8,18 +8,20 @@ class AEmulatorFPCharacter;
 class AEmulatorGodPawn;
 
 UENUM()
-enum class ControlMode
+enum class FControlMode
 {
 	FirstPerson = 0,
 	GodMode = 1
 };
 
 UENUM()
-enum class InteractionMode
+enum class FInteractionMode
 {
-	ObserveMode = 0,
-	InteractMode = 1,
-	BuildMode = 2
+	FullMenuMode = 0,
+	PopupMenuMode = 1,
+	ObserveMode = 2,
+	InteractMode = 3,
+	BuildMode = 4
 };
 
 UCLASS()
@@ -41,15 +43,29 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AEmulatorGodPawn> GodModeCharacter = nullptr;
 
-	void TransitionToGodMode();
-
-	void TransitionToFirstPersonMode();
+	virtual void SetupInputComponent() override;
 
 	void ToggleControlMode();
 
-	void ChangeInteractionMode();
+	void SetGodControlMode();
 
-	ControlMode CurrentControlMode;
+	void SetFirstPersonControlMode();
 
-	InteractionMode CurrentInteractionMode;
+	void ChangeInteractionMode(FInteractionMode NewInteractionMode);
+
+	void SetFullMenuInteractionMode();
+
+	void SetPopupMenuInteractionMode();
+
+	void SetObserveInteractionMode();
+
+	void SetInteractInteractionMode();
+
+	void SetBuildInteractionMode();
+
+	FControlMode CurrentControlMode;
+
+	FInteractionMode CurrentInteractionMode;
+
+	AActor* CurrentSelection;
 };
