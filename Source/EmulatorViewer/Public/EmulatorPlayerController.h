@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -14,6 +12,14 @@ enum class ControlMode
 {
 	FirstPerson = 0,
 	GodMode = 1
+};
+
+UENUM()
+enum class InteractionMode
+{
+	ObserveMode = 0,
+	InteractMode = 1,
+	BuildMode = 2
 };
 
 UCLASS()
@@ -35,11 +41,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AEmulatorGodPawn> GodModeCharacter = nullptr;
 
-	void SetupGodMode();
+	void TransitionToGodMode();
 
-	void SetupFirstPersonMode();
+	void TransitionToFirstPersonMode();
 
-	void ChangeControlMode();
+	void ToggleControlMode();
+
+	void ChangeInteractionMode();
 
 	ControlMode CurrentControlMode;
+
+	InteractionMode CurrentInteractionMode;
 };

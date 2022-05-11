@@ -9,37 +9,42 @@ void AEmulatorPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->InputComponent->BindAction("KeyboardC", IE_Pressed, this, &AEmulatorPlayerController::ChangeControlMode);
+	this->InputComponent->BindAction("KeyboardC", IE_Pressed, this, &AEmulatorPlayerController::ToggleControlMode);
 }
 
-void AEmulatorPlayerController::ChangeControlMode()
+void AEmulatorPlayerController::ToggleControlMode()
 {
 	switch (this->CurrentControlMode)
 	{
 	case ControlMode::FirstPerson:
 
 		this->CurrentControlMode = ControlMode::GodMode;
-		this->SetupGodMode();
+		this->TransitionToGodMode();
 		break;
 
 	case ControlMode::GodMode:
 
 		this->CurrentControlMode = ControlMode::FirstPerson;
-		this->SetupFirstPersonMode();
+		this->TransitionToFirstPersonMode();
 		break;
 
 	default:
 		UE_LOG(LogTemp, Error, TEXT("PlayerController: CurrentControlMode unknown."));
-		this->SetupGodMode();
+		this->TransitionToGodMode();
 	}
 }
 
-void AEmulatorPlayerController::SetupGodMode()
+void AEmulatorPlayerController::ChangeInteractionMode()
 {
 
 }
 
-void AEmulatorPlayerController::SetupFirstPersonMode()
+void AEmulatorPlayerController::TransitionToGodMode()
+{
+
+}
+
+void AEmulatorPlayerController::TransitionToFirstPersonMode()
 {
 
 }
