@@ -4,8 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EmulatorPlayerController.generated.h"
 
-class AEmulatorFPCharacter;
-class AEmulatorGodPawn;
+class UUserWidget;
 
 UENUM()
 enum class FControlMode
@@ -36,12 +35,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AEmulatorFPCharacter> FirstPersonCharacter = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AEmulatorGodPawn> GodModeCharacter = nullptr;
 
 	virtual void SetupInputComponent() override;
 
