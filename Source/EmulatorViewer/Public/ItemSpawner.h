@@ -15,8 +15,6 @@ public:
 	// Sets default values for this actor's properties
 	AItemSpawner();
 
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
 	UStaticMeshComponent* VisibleMesh;
 

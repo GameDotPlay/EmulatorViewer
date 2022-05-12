@@ -67,10 +67,3 @@ void AItemSpawner::SpawnItem()
 		AItem* ItemSpawned = GetWorld()->SpawnActor<AItem>(Item, Transform, SpawnParameters);
 	}
 }
-
-void AItemSpawner::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	this->InitializeTimer();
-}
