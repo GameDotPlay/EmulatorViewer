@@ -181,7 +181,7 @@ void AEmulatorGodPawn::FocusView()
 
 void AEmulatorGodPawn::Zoom(float Value)
 {
-	this->SpringArm->TargetArmLength -= Value * this->MouseWheelSensitivity;
+	this->SpringArm->TargetArmLength -= Value * GetWorld()->GetDeltaSeconds() * this->MouseWheelSensitivity;
 
 	if (this->SpringArm->TargetArmLength < MinTargetArmLength)
 	{
