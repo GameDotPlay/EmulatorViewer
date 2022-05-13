@@ -1,11 +1,23 @@
 
 #include "EmulatorPlayerController.h"
-#include "EmulatorFPCharacter.h"
-#include "EmulatorGodPawn.h"
+#include "UI/MainHUDWidget.h"
 
 void AEmulatorPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	this->MainHUD = Cast<UMainHUDWidget>(CreateWidget(this, this->MainHUDWidget, FName(TEXT("Main HUD Widget"))));
+
+	if (this->MainHUD)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MainHUD not null."));
+		this->MainHUD->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MainHUD is null."));
+	}
+
 	this->SetObserveInteractionMode();
 }
 
@@ -85,6 +97,7 @@ void AEmulatorPlayerController::SetObserveInteractionMode()
 	UE_LOG(LogTemp, Warning, TEXT("In SetObserveInteractionMode()"));
 
 	this->SetInputMode(FInputModeGameAndUI());
+	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Observe Mode")));
 	this->CurrentInteractionMode = FInteractionMode::ObserveMode;
 }
 
@@ -94,6 +107,7 @@ void AEmulatorPlayerController::SetInteractInteractionMode()
 
 	this->SetMouseCursorWidget(EMouseCursor::GrabHand, nullptr);
 	this->SetInputMode(FInputModeGameAndUI());
+	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Interact Mode")));
 	this->CurrentInteractionMode = FInteractionMode::InteractMode;
 }
 
@@ -102,6 +116,7 @@ void AEmulatorPlayerController::SetBuildInteractionMode()
 	UE_LOG(LogTemp, Warning, TEXT("In SetBuildInteractionMode()"));
 
 	this->SetInputMode(FInputModeGameAndUI());
+	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Build Mode")));
 	this->CurrentInteractionMode = FInteractionMode::BuildMode;
 }
 

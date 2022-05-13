@@ -4,7 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EmulatorPlayerController.generated.h"
 
-class UUserWidget;
+class UMainHUDWidget;
 
 UENUM()
 enum class FControlMode
@@ -35,6 +35,11 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UMainHUDWidget> MainHUDWidget;
+
+	UMainHUDWidget* MainHUD;
 
 	virtual void SetupInputComponent() override;
 
