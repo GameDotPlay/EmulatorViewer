@@ -55,7 +55,7 @@ private:
 	float MouseRotateSpeed = 200.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MouseWheelSensitivity = 1000.f;
+	float MouseWheelSensitivity = 1500.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MinTargetArmLength = 200.f;
