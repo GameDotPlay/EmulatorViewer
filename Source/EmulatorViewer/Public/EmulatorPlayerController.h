@@ -4,7 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "EmulatorPlayerController.generated.h"
 
-class UMainHUDWidget;
+
 
 UENUM()
 enum class FControlMode
@@ -37,9 +37,22 @@ protected:
 private:
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UMainHUDWidget> MainHUDWidget;
+	TSubclassOf<class UMainHUDWidget> MainHUDWidget;
 
-	UMainHUDWidget* MainHUD;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	float FloorZOffset = 50.f;
+
+	float FloorZ = 0.f;
+
+	UMainHUDWidget* MainHUD = nullptr;
+
+	AActor* CurrentSelection = nullptr;
+
+	class AEmulatorGodPawn* CurrentPawn = nullptr;
+
+	FControlMode CurrentControlMode;
+
+	FInteractionMode CurrentInteractionMode;
 
 	virtual void SetupInputComponent() override;
 
@@ -61,9 +74,39 @@ private:
 
 	void SetBuildInteractionMode();
 
-	FControlMode CurrentControlMode;
+	void LeftClickSelect();
 
-	FInteractionMode CurrentInteractionMode;
+	class UInteractableHighlighting* GetInteractableComponent(AActor* Actor);
 
-	AActor* CurrentSelection;
+#pragma region InputBindings
+
+	void HandleKeyboard1();
+
+	void HandleKeyboard2();
+
+	void HandleKeyboard3();
+
+	void HandleKeyboardF();
+
+	void HandleKeyboardEND();
+
+	void HandleMiddleMouseButtonPressed();
+
+	void HandleMiddleMouseButtonReleased();
+
+	void HandleLeftMouseButton();
+
+	void HandleRightMouseButton();
+
+	void HandleMouseWheel(float Value);
+
+	void HandleMouseXAxis(float Value);
+
+	void HandleMouseYAxis(float Value);
+
+	void HandleForwardAxis(float Value);
+
+	void HandleRightAxis(float Value);
+
+#pragma endregion
 };
