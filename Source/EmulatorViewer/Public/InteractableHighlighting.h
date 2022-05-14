@@ -22,6 +22,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnMouseExit(AActor* TouchedActor);
 
+	void SetSelectedActive();
+
+	void SetSelectedDisabled();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -31,6 +35,8 @@ private:
 	AActor* Owner = nullptr;
 
 	TArray<UStaticMeshComponent*> MeshComponentReferences;
+
+	bool bSelected = false;
 
 	void SetInteractedActive();
 

@@ -33,6 +33,18 @@ void UInteractableHighlighting::OnMouseExit(AActor* TouchedActor)
 	this->SetInteractedDisabled();
 }
 
+void UInteractableHighlighting::SetSelectedActive()
+{
+	this->bSelected = true;
+	this->SetInteractedActive();
+}
+
+void UInteractableHighlighting::SetSelectedDisabled()
+{
+	this->bSelected = false;
+	this->SetInteractedDisabled();
+}
+
 void UInteractableHighlighting::SetInteractedActive()
 {
 	for (int i = 0; i < this->MeshComponentReferences.Num(); i++)
@@ -43,8 +55,11 @@ void UInteractableHighlighting::SetInteractedActive()
 
 void UInteractableHighlighting::SetInteractedDisabled()
 {
-	for (int i = 0; i < this->MeshComponentReferences.Num(); i++)
+	if (!this->bSelected)
 	{
-		this->MeshComponentReferences[i]->SetScalarParameterValueOnMaterials(FName("Interact"), 0.f);
+		for (int i = 0; i < this->MeshComponentReferences.Num(); i++)
+		{
+			this->MeshComponentReferences[i]->SetScalarParameterValueOnMaterials(FName("Interact"), 0.f);
+		}
 	}
 }
