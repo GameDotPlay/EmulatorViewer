@@ -28,8 +28,9 @@ void AEmulatorGodPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->PlayerController = Cast<AEmulatorPlayerController>(GetController());
+	this->PlayerController = Cast<APlayerController>(GetController());
 	check(this->PlayerController);
+
 	this->PlayerController->GetViewportSize(this->CurrentViewportSize.X, this->CurrentViewportSize.Y);
 }
 
@@ -45,23 +46,6 @@ void AEmulatorGodPawn::Tick(float DeltaTime)
 	{
 		this->MouseEdgeScroll();
 	}
-}
-
-// Called to bind functionality to input
-void AEmulatorGodPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAxis("MouseWheel", this, &AEmulatorGodPawn::Zoom);
-	PlayerInputComponent->BindAxis("MouseX", this, &AEmulatorGodPawn::RotateMouseX);
-	PlayerInputComponent->BindAxis("MouseY", this, &AEmulatorGodPawn::RotateMouseY);
-	PlayerInputComponent->BindAxis("ForwardAxis", this, &AEmulatorGodPawn::MoveForward);
-	PlayerInputComponent->BindAxis("RightAxis", this, &AEmulatorGodPawn::MoveRight);
-
-	PlayerInputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Pressed, this, &AEmulatorGodPawn::MiddleMousePressed);
-	PlayerInputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Released, this, &AEmulatorGodPawn::MiddleMouseReleased);
-	PlayerInputComponent->BindAction("LeftMouseButton", EInputEvent::IE_Released, this, &AEmulatorGodPawn::LeftClickSelect);
-	PlayerInputComponent->BindAction("KeyboardF", EInputEvent::IE_Pressed, this, &AEmulatorGodPawn::FocusView);
 }
 
 void AEmulatorGodPawn::MouseEdgeScroll()
@@ -105,26 +89,6 @@ void AEmulatorGodPawn::MoveRight(float Value)
 	SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, PreviousZ));
 }
 
-void AEmulatorGodPawn::LeftClickSelect()
-{
-	FHitResult HitResult;
-	this->PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-	AActor* HitActor = HitResult.GetActor();
-
-	if (HitActor)
-	{
-		FVector HitActorExtents;
-		FVector HitActorOrigin;
-		HitActor->GetActorBounds(true, HitActorOrigin, HitActorExtents, true);
-		DrawDebugString(GetWorld(), HitActorOrigin + FVector(0, 0, 100), FString(*HitResult.GetActor()->GetActorNameOrLabel()), nullptr, FColor::Yellow, 1.f, true, 2.f);
-		UE_LOG(LogTemp, Warning, TEXT("Clicked: %s"), *HitResult.GetActor()->GetActorNameOrLabel());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Clicked hit returned null"));
-	}
-}
-
 void AEmulatorGodPawn::MiddleMousePressed()
 {
 	this->bMiddleMousePressed = true;
@@ -135,7 +99,17 @@ void AEmulatorGodPawn::MiddleMouseReleased()
 	this->bMiddleMousePressed = false;
 }
 
-void AEmulatorGodPawn::RotateMouseX(float Value)
+void AEmulatorGodPawn::KeyboardF(FVector Location)
+{
+	this->FocusView(Location);
+}
+
+void AEmulatorGodPawn::KeyboardEND(float NewZ)
+{
+	this->SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, NewZ));
+}
+
+void AEmulatorGodPawn::MouseXAxis(float Value)
 {
 	if (this->bMiddleMousePressed)
 	{
@@ -150,7 +124,7 @@ void AEmulatorGodPawn::RotateMouseX(float Value)
 	}
 }
 
-void AEmulatorGodPawn::RotateMouseY(float Value)
+void AEmulatorGodPawn::MouseYAxis(float Value)
 {
 	if (this->bMiddleMousePressed)
 	{
@@ -174,9 +148,14 @@ void AEmulatorGodPawn::RotateMouseY(float Value)
 	}
 }
 
-void AEmulatorGodPawn::FocusView()
+void AEmulatorGodPawn::MouseWheelAxis(float Value)
 {
-	
+	this->Zoom(Value);
+}
+
+void AEmulatorGodPawn::FocusView(FVector Location)
+{
+	this->SetActorLocation(Location);
 }
 
 void AEmulatorGodPawn::Zoom(float Value)

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "PawnInterface.h"
 #include "EmulatorGodPawn.generated.h"
 
 struct ViewportSize {
@@ -13,22 +14,36 @@ struct ViewportSize {
 };
 
 UCLASS()
-class EMULATORVIEWER_API AEmulatorGodPawn : public APawn
+class EMULATORVIEWER_API AEmulatorGodPawn : public APawn, public IPawnInterface
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
+
 	AEmulatorGodPawn();
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void MiddleMousePressed() override;
+
+	virtual void MiddleMouseReleased() override;
+
+	virtual void KeyboardF(FVector Location) override;
+
+	virtual void KeyboardEND(float NewZ) override;
+
+	virtual void MoveForward(float Value) override;
+
+	virtual void MoveRight(float Value) override;
+
+	virtual void MouseXAxis(float Value) override;
+
+	virtual void MouseYAxis(float Value) override;
+
+	virtual void MouseWheelAxis(float Value) override;
 
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
 private:
@@ -55,7 +70,7 @@ private:
 	float MouseRotateSpeed = 200.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float MouseWheelSensitivity = 1500.f;
+	float MouseWheelSensitivity = 10000.f;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float MinTargetArmLength = 200.f;
@@ -80,31 +95,15 @@ private:
 
 	bool bMiddleMousePressed = false;
 
-	class AEmulatorPlayerController* PlayerController;
-
-	AActor* LastSelected = nullptr;
+	APlayerController* PlayerController;
 
 	FVector2D MousePosition;
 
 	ViewportSize CurrentViewportSize;
 
-	void MiddleMousePressed();
-
-	void MiddleMouseReleased();
-
-	void RotateMouseX(float Value);
-
-	void RotateMouseY(float Value);
-
-	void FocusView();
+	void FocusView(FVector Location);
 
 	void Zoom(float Value);
 
 	void MouseEdgeScroll();
-
-	void MoveForward(float Value);
-
-	void MoveRight(float Value);
-
-	void LeftClickSelect();
 };
