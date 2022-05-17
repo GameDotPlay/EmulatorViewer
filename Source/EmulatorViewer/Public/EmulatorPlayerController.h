@@ -74,6 +74,8 @@ private:
 
 	void SetBuildInteractionMode();
 
+	FInputModeGameAndUI GetDefaultInputMode();
+
 	void LeftClickSelect();
 
 	class UInteractableHighlighting* GetInteractableComponent(AActor* Actor);

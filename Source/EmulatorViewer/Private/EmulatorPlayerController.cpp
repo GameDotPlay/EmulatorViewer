@@ -20,7 +20,7 @@ void AEmulatorPlayerController::BeginPlay()
 	this->MainHUD = Cast<UMainHUDWidget>(CreateWidget(this, this->MainHUDWidget, FName(TEXT("Main HUD Widget"))));
 	check(this->MainHUD);
 
-	this->MainHUD->AddToViewport();
+	//this->MainHUD->AddToViewport();
 
 	this->SetObserveInteractionMode();
 }
@@ -88,29 +88,38 @@ void AEmulatorPlayerController::SetFullMenuInteractionMode()
 
 void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 {
-	this->SetInputMode(FInputModeGameAndUI());
+	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::PopupMenuMode;
 }
 
 void AEmulatorPlayerController::SetObserveInteractionMode()
 {
-	this->SetInputMode(FInputModeGameAndUI());
+	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Observe Mode")));
 	this->CurrentInteractionMode = FInteractionMode::ObserveMode;
 }
 
 void AEmulatorPlayerController::SetInteractInteractionMode()
 {
-	this->SetInputMode(FInputModeGameAndUI());
+	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Interact Mode")));
 	this->CurrentInteractionMode = FInteractionMode::InteractMode;
 }
 
 void AEmulatorPlayerController::SetBuildInteractionMode()
 {
-	this->SetInputMode(FInputModeGameAndUI());
+	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Build Mode")));
 	this->CurrentInteractionMode = FInteractionMode::BuildMode;
+}
+
+FInputModeGameAndUI AEmulatorPlayerController::GetDefaultInputMode()
+{
+	FInputModeGameAndUI InputMode;
+	InputMode.SetHideCursorDuringCapture(false);
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
+
+	return InputMode;
 }
 
 void AEmulatorPlayerController::SetupInputComponent()
