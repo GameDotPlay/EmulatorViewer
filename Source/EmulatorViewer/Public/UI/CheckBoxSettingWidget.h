@@ -14,22 +14,15 @@ class EMULATORVIEWER_API UCheckBoxSettingWidget : public UUserWidget
 
 public:
 
-	ECheckBoxState GetCheckBoxValue();
+	void SetToolTip(FText InToolTipText);
 
-	void SetLabelText(FText LabelText);
-
-	void SetSettingToolTip(FText InToolTipText);
-
-protected:
-
-	void NativeConstruct() override;
-
-	UPROPERTY( meta = (BindWidget))
-	class UHorizontalBox* HorizontalContainer;
-
-	UPROPERTY( meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	class UCheckBox* CheckBox;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* SettingLabel;
+
+protected:
+
+	void NativeConstruct() override;
 };
