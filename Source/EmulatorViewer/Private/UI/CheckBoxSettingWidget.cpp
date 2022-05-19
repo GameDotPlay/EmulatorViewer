@@ -1,6 +1,4 @@
 
-
-
 #include "UI/CheckBoxSettingWidget.h"
 #include "Components/HorizontalBox.h"
 #include "Components/CheckBox.h"
