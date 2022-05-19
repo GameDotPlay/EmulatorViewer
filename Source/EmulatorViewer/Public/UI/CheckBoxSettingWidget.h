@@ -2,12 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-
 #include "CheckBoxSettingWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class EMULATORVIEWER_API UCheckBoxSettingWidget : public UUserWidget
 {
