@@ -1,9 +1,9 @@
 
-#include "UI/StatRow.h"
+#include "UI/StatRowWidget.h"
 #include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
 
-void UStatRow::NativeConstruct()
+void UStatRowWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
@@ -13,7 +13,7 @@ void UStatRow::NativeConstruct()
 	//this->Value->
 }
 
-void UStatRow::SetToolTip(FText InToolTipText)
+void UStatRowWidget::SetToolTip(FText InToolTipText)
 {
 	this->StatDescription->SetToolTipText(InToolTipText);
 	this->Value->SetToolTipText(InToolTipText);

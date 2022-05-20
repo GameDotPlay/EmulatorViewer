@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "StatRow.generated.h"
+#include "StatRowWidget.generated.h"
 
 UCLASS()
-class EMULATORVIEWER_API UStatRow : public UUserWidget
+class EMULATORVIEWER_API UStatRowWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
