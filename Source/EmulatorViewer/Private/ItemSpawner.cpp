@@ -18,7 +18,10 @@ void AItemSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->InitializeTimer();
+	if (this->bEnabled)
+	{
+		this->InitializeTimer();
+	}
 }
 
 void AItemSpawner::InitializeTimer()
@@ -32,7 +35,7 @@ void AItemSpawner::InitializeTimer()
 	{
 		if (this->bEnabled)
 		{
-			GetWorldTimerManager().SetTimer(this->SpawnTimerHandle, this, &AItemSpawner::SpawnItem, this->SpawnRate, true, this->StartDelay);
+			GetWorldTimerManager().SetTimer(this->SpawnTimerHandle, this, &AItemSpawner::SpawnItem, this->SpawnTimerInterval, true, this->StartDelay);
 			return;
 		}
 	}
@@ -52,18 +55,76 @@ void AItemSpawner::SpawnItem()
 		int32 index = FMath::RandRange(0, this->Items.Num() - 1);
 		TSubclassOf<AItem> Item = this->Items[index];
 
-		FTransform Transform;
-		Transform.SetLocation(this->GetActorLocation());
-		Transform.SetRotation(FRotator::ZeroRotator.Quaternion());
+		FTransform Transform = this->GetActorTransform();
 
+		float ScaleModifier = 1.f;
 		if (this->bRandomizeScale)
 		{
-			this->ScaleModifier = FMath::RandRange(this->ScaleModifier, this->MaxScaleModifier);
+			ScaleModifier = FMath::RandRange(this->MinScaleModifier, this->MaxScaleModifier);
 		}
 		
-		Transform.SetScale3D(FVector(this->BaseScaleModifier * this->ScaleModifier));
+		Transform.SetScale3D(FVector(this->BaseScaleModifier * ScaleModifier));
 
 		FActorSpawnParameters SpawnParameters;
 		AItem* ItemSpawned = GetWorld()->SpawnActor<AItem>(Item, Transform, SpawnParameters);
+
+		if (ItemSpawned)
+		{
+			this->NumberOfSpawnedItems++;
+			this->OwnedItems.Emplace(ItemSpawned);
+		}
 	}
+}
+
+void AItemSpawner::KillAllOwnedItems()
+{
+	if (this->OwnedItems.Num() > 0)
+	{
+		for (int i = 0; i < this->OwnedItems.Num(); i++)
+		{
+			if (this->OwnedItems[i])
+			{
+				this->OwnedItems[i]->Destroy(false, false);
+			}
+			else
+			{
+				this->OwnedItems.RemoveAt(i);
+			}
+		}
+
+		this->NumberOfSpawnedItems = 0;
+		this->OwnedItems.Empty();
+	}
+}
+
+void AItemSpawner::SetRatePph(float Pph)
+{
+	this->SpawnTimerInterval = 1.f / (Pph / 60.f / 60.f);
+	this->InitializeTimer();
+}
+
+void AItemSpawner::SetRateHz(float Hz)
+{
+	this->SpawnTimerInterval = 1.f / Hz;
+	this->InitializeTimer();
+}
+
+void AItemSpawner::Enable()
+{
+	this->bEnabled = true;
+	this->InitializeTimer();
+}
+
+void AItemSpawner::Disable()
+{
+	this->bEnabled = false;
+	if (this->SpawnTimerHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(this->SpawnTimerHandle);
+	}
+}
+
+void AItemSpawner::DetailsPopupInteract(class UUserWidget* DetailsWidget)
+{
+
 }

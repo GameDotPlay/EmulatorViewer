@@ -2,16 +2,35 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PopulateDetailsInterface.h"
 #include "ItemSpawner.generated.h"
 
 UCLASS()
-class EMULATORVIEWER_API AItemSpawner : public AActor
+class EMULATORVIEWER_API AItemSpawner : public AActor, public IPopulateDetailsInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
 	AItemSpawner();
+
+	virtual void DetailsPopupInteract(class UUserWidget* DetailsWidget) override;
+
+	void KillAllOwnedItems();
+
+	void SetRatePph(float Pph);
+
+	void SetRateHz(float Hz);
+
+	void Enable();
+
+	void Disable();
+
+	float GetRatePph() const { return (1.f / this->SpawnTimerInterval) * 60.f * 60.f; }
+
+	float GetRateHz() const { return 1.f / this->SpawnTimerInterval; }
+
+	int32 GetNumberOfSpawnedItems() const { return this->NumberOfSpawnedItems; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
 	UStaticMeshComponent* VisibleMesh;
@@ -23,10 +42,7 @@ public:
 	float BaseScaleModifier = 2.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float ScaleModifier = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float SpawnRate = 1.f;
+	float SpawnTimerInterval = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
 	float StartDelay = 1.f;
@@ -35,10 +51,10 @@ public:
 	bool bRandomizeScale = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float MaxScaleModifier = 1.f;
+	float MinScaleModifier = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	TArray<TSubclassOf<class AItem>> Items;
+	float MaxScaleModifier = 1.f;
 
 protected:
 	// Called when the game starts or when spawned
@@ -46,7 +62,16 @@ protected:
 
 private:
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	TArray<TSubclassOf<class AItem>> Items;
+
 	struct FTimerHandle SpawnTimerHandle;
+
+	int32 NumberOfSpawnedItems = 0.f;
+
+	TArray<AItem*> OwnedItems;
+
+	bool bUsingGlobalSettings = true;
 
 	void SpawnItem();
 
