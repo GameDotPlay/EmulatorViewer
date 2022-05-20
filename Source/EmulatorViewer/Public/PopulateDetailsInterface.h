@@ -20,6 +20,7 @@ class EMULATORVIEWER_API IPopulateDetailsInterface
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	virtual void DetailsPopupInteract(class UUserWidget* DetailsWidget) { return; }
 };
