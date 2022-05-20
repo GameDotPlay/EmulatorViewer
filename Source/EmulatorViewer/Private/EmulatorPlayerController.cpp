@@ -20,7 +20,7 @@ void AEmulatorPlayerController::BeginPlay()
 	this->MainHUD = Cast<UMainHUDWidget>(CreateWidget(this, this->MainHUDWidget, FName(TEXT("Main HUD Widget"))));
 	check(this->MainHUD);
 
-	this->MainHUD->AddToViewport();
+	//this->MainHUD->AddToViewport();
 
 	this->SetObserveInteractionMode();
 }

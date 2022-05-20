@@ -10,7 +10,7 @@ void UStatRow::NativeConstruct()
 	this->HorizontalBox->AddChild(this->StatDescription);
 	this->HorizontalBox->AddChild(this->Value);
 
-	this->Value->
+	//this->Value->
 }
 
 void UStatRow::SetToolTip(FText InToolTipText)
