@@ -4,6 +4,7 @@
 #include "EmulatorGodPawn.h"
 #include "InteractableHighlighting.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/DetailsPopupHeaderWidget.h"
 
 void AEmulatorPlayerController::BeginPlay()
 {
@@ -19,9 +20,22 @@ void AEmulatorPlayerController::BeginPlay()
 
 	this->MainHUD = Cast<UMainHUDWidget>(CreateWidget(this, this->MainHUDWidget, FName(TEXT("Main HUD Widget"))));
 	check(this->MainHUD);
-
 	//this->MainHUD->AddToViewport();
 
+	UE_LOG(LogTemp, Warning, TEXT("Before CreateWidget()"));
+	UDetailsPopupHeaderWidget* HeaderWidget = Cast<UDetailsPopupHeaderWidget>(CreateWidget(this, UDetailsPopupHeaderWidget::StaticClass()));
+	UE_LOG(LogTemp, Warning, TEXT("After CreateWidget()"));
+	//check(HeaderWidget);
+
+	if (IsValid(HeaderWidget))
+	{
+		HeaderWidget->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HeaderWidget not valid."))
+	}
+	
 	this->SetObserveInteractionMode();
 }
 

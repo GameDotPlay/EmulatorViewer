@@ -36,5 +36,6 @@ private:
 
 	float Value = 1.f;
 
+	UFUNCTION()
 	void ValidateFloatInput(const FText& Text, ETextCommit::Type CommitMethod);
 };
