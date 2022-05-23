@@ -1,10 +1,11 @@
 
 #include "EmulatorPlayerController.h"
-#include "UI/MainHUDWidget.h"
 #include "EmulatorGodPawn.h"
 #include "InteractableHighlighting.h"
 #include "Kismet/GameplayStatics.h"
-#include "UI/DetailsPopupHeaderWidget.h"
+#include "PopulateDetailsInterface.h"
+#include "UI/DetailsPopupWidget.h"
+#include "UI/EmulatorViewerHUD.h"
 
 void AEmulatorPlayerController::BeginPlay()
 {
@@ -17,25 +18,10 @@ void AEmulatorPlayerController::BeginPlay()
 	UGameplayStatics::GetAllActorsWithTag(this, FName(TEXT("Floor")), Actors);
 	check(Actors.Num() > 0);
 	this->FloorZ = Actors[0]->GetActorLocation().Z;
-
-	this->MainHUD = Cast<UMainHUDWidget>(CreateWidget(this, this->MainHUDWidget, FName(TEXT("Main HUD Widget"))));
-	check(this->MainHUD);
-	//this->MainHUD->AddToViewport();
-
-	UE_LOG(LogTemp, Warning, TEXT("Before CreateWidget()"));
-	UDetailsPopupHeaderWidget* HeaderWidget = Cast<UDetailsPopupHeaderWidget>(CreateWidget(this, UDetailsPopupHeaderWidget::StaticClass()));
-	UE_LOG(LogTemp, Warning, TEXT("After CreateWidget()"));
-	//check(HeaderWidget);
-
-	if (IsValid(HeaderWidget))
-	{
-		HeaderWidget->AddToViewport();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HeaderWidget not valid."))
-	}
 	
+	this->MainHUD = this->GetHUD<AEmulatorViewerHUD>();
+	check(this->MainHUD);
+
 	this->SetObserveInteractionMode();
 }
 
@@ -109,21 +95,18 @@ void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 void AEmulatorPlayerController::SetObserveInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
-	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Observe Mode")));
 	this->CurrentInteractionMode = FInteractionMode::ObserveMode;
 }
 
 void AEmulatorPlayerController::SetInteractInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
-	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Interact Mode")));
 	this->CurrentInteractionMode = FInteractionMode::InteractMode;
 }
 
 void AEmulatorPlayerController::SetBuildInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
-	this->MainHUD->SetInteractionModeText(FText::FromString(TEXT("Build Mode")));
 	this->CurrentInteractionMode = FInteractionMode::BuildMode;
 }
 
@@ -174,14 +157,14 @@ void AEmulatorPlayerController::LeftClickSelect()
 		if (this->CurrentSelection != nullptr)
 		{
 			// Turn off current selection highlighting.
-			UInteractableHighlighting* HighlightComponent = this->GetInteractableComponent(this->CurrentSelection);
+			UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(this->CurrentSelection);
 			if (HighlightComponent)
 			{
 				HighlightComponent->SetSelectedDisabled();
 			}
 		}
 		
-		UInteractableHighlighting* HighlightComponent = this->GetInteractableComponent(HitActor);
+		UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(HitActor);
 		if (HighlightComponent)
 		{
 			HighlightComponent->SetSelectedActive();
@@ -194,7 +177,51 @@ void AEmulatorPlayerController::LeftClickSelect()
 	}
 }
 
-UInteractableHighlighting* AEmulatorPlayerController::GetInteractableComponent(AActor* Actor)
+void AEmulatorPlayerController::RightClickInteract()
+{
+	FHitResult HitResult;
+	this->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	AActor* HitActor = HitResult.GetActor();
+
+	if (HitActor != nullptr)
+	{
+		if (this->CurrentSelection != HitActor)
+		{
+			if (this->CurrentSelection != nullptr)
+			{
+				// Turn off current selection highlighting.
+				UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(this->CurrentSelection);
+				if (HighlightComponent)
+				{
+					HighlightComponent->SetSelectedDisabled();
+				}
+			}
+
+			UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(HitActor);
+			if (HighlightComponent)
+			{
+				HighlightComponent->SetSelectedActive();
+				this->CurrentSelection = HitActor;
+				FVector HitActorExtents;
+				FVector HitActorOrigin;
+				HitActor->GetActorBounds(true, HitActorOrigin, HitActorExtents, true);
+				DrawDebugString(GetWorld(), HitActorOrigin + FVector(0, 0, 100), FString(*HitActor->GetActorNameOrLabel()), nullptr, FColor::Yellow, 1.f, true, 2.f);
+			}
+		}
+
+		IPopulateDetailsInterface* ActorInterface = Cast<IPopulateDetailsInterface>(HitActor);
+		if (ActorInterface)
+		{
+			UDetailsPopupWidget* DetailsPopup = Cast<UDetailsPopupWidget>(CreateWidget(this, this->DetailsPopupClass));
+			ActorInterface->DetailsPopupInteract(DetailsPopup->GetContentWidget());
+			DetailsPopup->SetHeaderText(FText::FromString(HitActor->GetActorNameOrLabel()));
+
+			this->MainHUD->AddDetailsPopup(DetailsPopup);
+		}
+	}
+}
+
+UInteractableHighlighting* AEmulatorPlayerController::GetHighlightingComponent(AActor* Actor)
 {
 	if (Actor == nullptr)
 	{
@@ -282,7 +309,7 @@ void AEmulatorPlayerController::HandleLeftMouseButton()
 
 void AEmulatorPlayerController::HandleRightMouseButton()
 {
-
+	this->RightClickInteract();
 }
 
 void AEmulatorPlayerController::HandleMouseWheel(float Value)

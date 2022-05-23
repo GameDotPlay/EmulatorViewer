@@ -2,6 +2,8 @@
 #include "ItemSpawner.h"
 #include "Item.h"
 #include "TimerManager.h"
+#include "UI/DetailsPopupContentWidget.h"
+#include "Components/CheckBox.h"
 
 // Sets default values
 AItemSpawner::AItemSpawner()
@@ -124,7 +126,34 @@ void AItemSpawner::Disable()
 	}
 }
 
-void AItemSpawner::DetailsPopupInteract(class UUserWidget* DetailsWidget)
+void AItemSpawner::DetailsPopupInteract(UDetailsPopupContentWidget* ContentWidget)
 {
+	ECheckBoxState CurrentState;
+	if (this->bEnabled)
+	{
+		CurrentState = ECheckBoxState::Checked;
+	}
+	else
+	{
+		CurrentState = ECheckBoxState::Unchecked;
+	}
 
+	UCheckBox* EnabledCheckBox = ContentWidget->AddCheckBoxRow(CurrentState, !this->bUsingGlobalSettings, FText::FromString(TEXT("Enabled")), FText::FromString(TEXT("This setting enabled or disables this item spawner depending on the state of the check box.")));
+	
+	if (EnabledCheckBox)
+	{
+		EnabledCheckBox->OnCheckStateChanged.AddUniqueDynamic(this, &AItemSpawner::EnabledChanged);
+	}
+}
+
+void AItemSpawner::EnabledChanged(bool bIsChecked)
+{
+	if (bIsChecked)
+	{
+		this->Enable();
+	}
+	else
+	{
+		this->Disable();
+	}
 }

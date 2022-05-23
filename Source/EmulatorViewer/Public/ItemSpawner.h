@@ -14,7 +14,7 @@ public:
 	// Sets default values for this actor's properties
 	AItemSpawner();
 
-	virtual void DetailsPopupInteract(class UUserWidget* DetailsWidget) override;
+	virtual void DetailsPopupInteract(class UDetailsPopupContentWidget* ContentWidget) override;
 
 	void KillAllOwnedItems();
 
@@ -76,4 +76,7 @@ private:
 	void SpawnItem();
 
 	void InitializeTimer();
+
+	UFUNCTION()
+	void EnabledChanged(bool bIsChecked);
 };

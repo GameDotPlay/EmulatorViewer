@@ -4,6 +4,11 @@
 #include "GameFramework/PlayerController.h"
 #include "EmulatorPlayerController.generated.h"
 
+class AEmulatorViewerHUD;
+class AEmulatorGodPawn;
+class UInteractableHighlighting;
+class UUserWidget;
+
 
 
 UENUM()
@@ -36,19 +41,19 @@ protected:
 
 private:
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UMainHUDWidget> MainHUDWidget;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> DetailsPopupClass;
+
+	AEmulatorViewerHUD* MainHUD;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	float FloorZOffset = 50.f;
 
 	float FloorZ = 0.f;
 
-	UMainHUDWidget* MainHUD = nullptr;
-
 	AActor* CurrentSelection = nullptr;
 
-	class AEmulatorGodPawn* CurrentPawn = nullptr;
+	AEmulatorGodPawn* CurrentPawn = nullptr;
 
 	FControlMode CurrentControlMode;
 
@@ -78,7 +83,9 @@ private:
 
 	void LeftClickSelect();
 
-	class UInteractableHighlighting* GetInteractableComponent(AActor* Actor);
+	void RightClickInteract();
+
+	UInteractableHighlighting* GetHighlightingComponent(AActor* Actor);
 
 #pragma region InputBindings
 

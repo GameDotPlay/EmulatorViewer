@@ -4,6 +4,9 @@
 #include "Blueprint/UserWidget.h"
 #include "CheckBoxSettingWidget.generated.h"
 
+class UCheckBox;
+class UTextBlock;
+
 UCLASS()
 class EMULATORVIEWER_API UCheckBoxSettingWidget : public UUserWidget
 {
@@ -11,15 +14,25 @@ class EMULATORVIEWER_API UCheckBoxSettingWidget : public UUserWidget
 
 public:
 
-	void SetToolTip(FText InToolTipText);
+	void SetToolTip(const FText& InToolTipText = FText::GetEmpty());
 
-	UPROPERTY(meta = (BindWidget))
-	class UCheckBox* CheckBox;
+	void SetLabel(const FText& InLabelText);
 
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* SettingLabel;
+	void SetCheckedState(ECheckBoxState InitialState);
+
+	void SetEnabledState(bool bEnabled);
+
+	UCheckBox* GetCheckBoxWidget() const { return this->CheckBox; }
 
 protected:
 
 	void NativeConstruct() override;
+
+private:
+
+	UPROPERTY(meta = (BindWidget))
+	UCheckBox* CheckBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Label;
 };
