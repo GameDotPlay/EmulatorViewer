@@ -13,11 +13,10 @@ UCLASS()
 class EMULATORVIEWER_API UDetailsPopupHeaderWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
 
 public:
 
-	UDetailsPopupHeaderWidget(const FObjectInitializer& ObjectInitializer);
+	void SetHeaderText(const FText& InHeaderText);
 
 protected:
 
@@ -25,47 +24,9 @@ protected:
 
 private:
 
-	class USizeBox* Parent = nullptr;
-
-	class UBorder* HeaderBorder = nullptr;
-
-	class UHorizontalBox* HorizontalBox = nullptr;
-
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* HeaderText = nullptr;
 
-	class USizeBox* ButtonSizer = nullptr;
-
+	UPROPERTY(meta=(BindWidget))
 	class UButton* CloseButton = nullptr;
-
-	class UTextBlock* CloseButtonText = nullptr;
-
-	void InitializeSettings();
-
-	void InitializeCloseButtonText();
-
-	void InitializeCloseButton();
-
-	void InitializeButtonSizer();
-
-	void InitializeHeaderText();
-
-	void InitializeHorizontalBox();
-
-	void InitializeHeaderBorder();
-
-	void InitializeParent();
-
-	int32 CloseButtonTextFontSize = 8;
-
-	int32 HeaderTextFontSize = 12;
-
-	float ParentBoxMinWidth = 200;
-
-	float ParentBoxMinHeight = 35;
-
-	float ParentBoxMaxHeight = 35;
-
-	FText CloseButtonTextString = FText::FromString("X");
-
-	float CloseButtonSize = 20.f;
 };
