@@ -12,13 +12,17 @@ void UDetailsPopupWidget::NativeConstruct()
 
 	this->HeaderWidget->GetButton()->OnClicked.AddUniqueDynamic(this, &UDetailsPopupWidget::ClosePopup);
 	this->ParentSlot = Cast<UCanvasPanelSlot>(this->Slot);
+
+	this->PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 }
 
 FReply UDetailsPopupWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	this->bMouseDown = true;
+	/*const TShared
+	FReply Reply = FReply::DetectDrag()*/
+
 
 	return FReply::Handled();
 }
@@ -26,28 +30,35 @@ FReply UDetailsPopupWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry,
 FReply UDetailsPopupWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
+	
+	return FReply::Handled();
+}
+
+void UDetailsPopupWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	this->bMouseDown = true;
+}
+
+void UDetailsPopupWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 
 	this->bMouseDown = false;
-
-	return FReply::Handled();
 }
 
 void UDetailsPopupWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("%d"), this->bMouseDown);
-
 	if (this->bMouseDown)
 	{
-		/*if (IsValid(this->ParentSlot))
+		if (IsValid(this->ParentSlot))
 		{
-			FVector2D Position = this->ParentSlot->GetPosition();
-			UE_LOG(LogTemp, Warning, TEXT("X:%f, Y:%f"), Position.X, Position.Y);
-			APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 			FVector2D MousePos;
-			PC->GetMousePosition(MousePos.X, MousePos.Y);
+			this->PlayerController->GetMousePosition(MousePos.X, MousePos.Y);
 			this->ParentSlot->SetPosition(MousePos);
-		}*/
+		}
 	}
 }

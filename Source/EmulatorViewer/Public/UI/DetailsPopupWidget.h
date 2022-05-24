@@ -27,6 +27,10 @@ public:
 
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+
+	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void SetHeaderText(const FText& HeaderText) { this->HeaderWidget->SetHeaderText(HeaderText); }
@@ -49,4 +53,6 @@ private:
 	bool bMouseDown = false;
 
 	UCanvasPanelSlot* ParentSlot = nullptr;
+
+	APlayerController* PlayerController = nullptr;
 };
