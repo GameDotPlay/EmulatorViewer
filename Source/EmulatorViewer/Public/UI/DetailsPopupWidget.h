@@ -6,7 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "DetailsPopupContentWidget.h"
 #include "DetailsPopupHeaderWidget.h"
+#include "Input/Reply.h"
 #include "DetailsPopupWidget.generated.h"
+
+class UCanvasPanelSlot;
 
 /**
  * 
@@ -19,6 +22,12 @@ class EMULATORVIEWER_API UDetailsPopupWidget : public UUserWidget
 public:
 
 	UDetailsPopupContentWidget* GetContentWidget() { return this->ContentWidget; }
+
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void SetHeaderText(const FText& HeaderText) { this->HeaderWidget->SetHeaderText(HeaderText); }
 
@@ -36,4 +45,8 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UDetailsPopupContentWidget* ContentWidget;
+
+	bool bMouseDown = false;
+
+	UCanvasPanelSlot* ParentSlot = nullptr;
 };
