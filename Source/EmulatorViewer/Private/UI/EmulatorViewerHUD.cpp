@@ -5,6 +5,7 @@
 #include "UI/DetailsPopupWidget.h"
 #include "UI/PopupContainerWidget.h"
 #include "Components/CanvasPanel.h"
+#include "Kismet/GameplayStatics.h"
 
 void AEmulatorViewerHUD::ShowPauseMenu()
 {
@@ -34,11 +35,14 @@ void AEmulatorViewerHUD::AddDetailsPopup(UDetailsPopupWidget* DetailsPopup)
 		{
 			this->InitializePopupsCanvas();
 		}
+
+		DetailsPopup->AddToViewport();
 	}
 }
 
 void AEmulatorViewerHUD::InitializePopupsCanvas()
 {
-	//this->PopupsCanvas = Cast<UPopupContainerWidget>(CreateWidget(this, this->PopupsCanvasClass));
-	//this->PopupsCanvas->AddToViewport();
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	this->PopupsCanvas = Cast<UPopupContainerWidget>(CreateWidget(PC, this->PopupsCanvasClass));
+	this->PopupsCanvas->AddToViewport();
 }

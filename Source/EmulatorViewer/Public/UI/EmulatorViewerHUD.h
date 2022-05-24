@@ -44,11 +44,11 @@ protected:
 
 private:
 
-	UUserWidget* PauseMenu;
+	UUserWidget* PauseMenu = nullptr;
 
-	UUserWidget* MainMenu;
+	UUserWidget* MainMenu = nullptr;
 
-	UPopupContainerWidget* PopupsCanvas;
+	UPopupContainerWidget* PopupsCanvas = nullptr;
 
 	void InitializePopupsCanvas();
 };
