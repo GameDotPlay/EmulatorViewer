@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
+#include "Components/Button.h"
 #include "DetailsPopupHeaderWidget.generated.h"
 
 /**
@@ -16,7 +18,9 @@ class EMULATORVIEWER_API UDetailsPopupHeaderWidget : public UUserWidget
 
 public:
 
-	void SetHeaderText(const FText& InHeaderText);
+	void SetHeaderText(const FText& InHeaderText) { this->HeaderText->SetText(InHeaderText); }
+
+	UButton* GetButton() const { return this->CloseButton; }
 
 protected:
 
@@ -25,8 +29,8 @@ protected:
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* HeaderText = nullptr;
+	UTextBlock* HeaderText = nullptr;
 
 	UPROPERTY(meta=(BindWidget))
-	class UButton* CloseButton = nullptr;
+	UButton* CloseButton = nullptr;
 };
