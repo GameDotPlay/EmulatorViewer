@@ -5,9 +5,14 @@
 #include "Components/CanvasPanel.h"
 #include "Components/Widget.h"
 
-void UPopupContainerWidget::AddPopup(UUserWidget* Popup) const
+UCanvasPanelSlot* UPopupContainerWidget::AddPopup(UUserWidget* Popup) const
 {
-	
+	if (IsValid(Popup))
+	{
+		return this->PopupsCanvas->AddChildToCanvas(Popup);
+	}
+
+	return nullptr;
 }
 
 void UPopupContainerWidget::NativeConstruct()

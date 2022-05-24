@@ -7,6 +7,7 @@
 #include "PopupContainerWidget.generated.h"
 
 class UCanvasPanel;
+class UCanvasPanelSlot;
 
 /**
  * 
@@ -18,7 +19,7 @@ class EMULATORVIEWER_API UPopupContainerWidget : public UUserWidget
 
 public:
 
-	void AddPopup(UUserWidget* Popup) const;
+	UCanvasPanelSlot* AddPopup(UUserWidget* Popup) const;
 
 protected:
 
