@@ -22,6 +22,9 @@ public:
 
 	void SetHeaderText(const FText& HeaderText) { this->HeaderWidget->SetHeaderText(HeaderText); }
 
+	UFUNCTION()
+	void ClosePopup() { this->RemoveFromParent(); }
+
 protected:
 
 	virtual void NativeConstruct() override;
