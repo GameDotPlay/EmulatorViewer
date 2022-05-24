@@ -10,6 +10,7 @@ class UUserWidget;
 class UDetailsPopupWidget;
 class UCanvasPanel;
 class UPopupContainerWidget;
+class UCanvasPanelSlot;
 
 /**
  * 
@@ -51,4 +52,6 @@ private:
 	UPopupContainerWidget* PopupsCanvas = nullptr;
 
 	void InitializePopupsCanvas();
+
+	void ConfigurePopupCanvasSlot(UCanvasPanelSlot* Slot) const;
 };
