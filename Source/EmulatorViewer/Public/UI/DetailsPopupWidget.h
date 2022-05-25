@@ -25,18 +25,16 @@ public:
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
-	virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 
-	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void SetHeaderText(const FText& HeaderText) { this->HeaderWidget->SetHeaderText(HeaderText); }
 
 	UFUNCTION()
-	void ClosePopup() { this->RemoveFromParent(); }
+	void ClosePopup() { this->RemoveFromParent(); this->NativeDestruct();}
 
 protected:
 
@@ -55,4 +53,6 @@ private:
 	UCanvasPanelSlot* ParentSlot = nullptr;
 
 	APlayerController* PlayerController = nullptr;
+
+	FVector2D DragOffset;
 };

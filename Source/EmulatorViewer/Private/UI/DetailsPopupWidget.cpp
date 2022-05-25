@@ -5,6 +5,9 @@
 #include "Input/Reply.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Kismet/GameplayStatics.h"
+#include "Blueprint/DragDropOperation.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "UI/DragWidget.h"
 
 void UDetailsPopupWidget::NativeConstruct()
 {
@@ -12,7 +15,6 @@ void UDetailsPopupWidget::NativeConstruct()
 
 	this->HeaderWidget->GetButton()->OnClicked.AddUniqueDynamic(this, &UDetailsPopupWidget::ClosePopup);
 	this->ParentSlot = Cast<UCanvasPanelSlot>(this->Slot);
-
 	this->PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 }
 
@@ -20,53 +22,34 @@ FReply UDetailsPopupWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry,
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-	this->bMouseDown = true;
-
-	/*const TShared
-	FReply Reply = FReply::DetectDrag()*/
-
-
-	return FReply::Handled();
-}
-
-FReply UDetailsPopupWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
-	this->bMouseDown = false;
-	return FReply::Handled();
+	FEventReply ReplyResult = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
+	return ReplyResult.NativeReply;
 }
 
 void UDetailsPopupWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+	
+	UDragWidget* DragDropOperation = Cast<UDragWidget>(UWidgetBlueprintLibrary::CreateDragDropOperation(UDragWidget::StaticClass()));
+	this->SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	this->bMouseDown = true;
+	DragDropOperation->WidgetReference = this;
+	DragDropOperation->DragOffset = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
+	DragDropOperation->DefaultDragVisual = this;
+	DragDropOperation->Pivot = EDragPivot::MouseDown;
+
+	OutOperation = DragDropOperation;
 }
 
-void UDetailsPopupWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+void UDetailsPopupWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
+	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
 
-	this->bMouseDown = false;
+	this->RemoveFromParent();
 }
 
 void UDetailsPopupWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	FVector2D MousePos;
-	this->PlayerController->GetMousePosition(MousePos.X, MousePos.Y);
-	UE_LOG(LogTemp, Warning, TEXT("Mouse - X:%f, Y:%f"), MousePos.X, MousePos.Y);
-
-	FGeometry AbsoluteGeometry = this->GetCachedGeometry();
-	UE_LOG(LogTemp, Warning, TEXT("PopupAbsolute - X:%f, Y:%f"), AbsoluteGeometry.GetAbsolutePosition().X, AbsoluteGeometry.GetAbsolutePosition().Y);
-
-	//if (this->bMouseDown)
-	//{
-		if (IsValid(this->ParentSlot))
-		{
-			this->ParentSlot->SetPosition(MousePos);
-			UE_LOG(LogTemp, Warning, TEXT("Popup - X:%f, Y:%f"), ParentSlot->GetPosition().X, ParentSlot->GetPosition().Y);
-		}
-	//}
 }
