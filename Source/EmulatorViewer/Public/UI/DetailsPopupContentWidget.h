@@ -6,6 +6,8 @@
 
 class UCheckBox;
 class UVerticalBox;
+class UEditableTextBox;
+class UFloatInputSettingWidget;
 
 /**
  * 
@@ -17,9 +19,9 @@ class EMULATORVIEWER_API UDetailsPopupContentWidget : public UUserWidget
 
 public:
 
-	void AddRow(TSubclassOf<UUserWidget> UserWidget);
+	UCheckBox* AddCheckBoxRow(bool InitialCheckedState, bool bEnabled, const FText& InDescription, const FText& InToolTipText = FText::GetEmpty());
 
-	UCheckBox* AddCheckBoxRow(ECheckBoxState InitialCheckedState, bool bEnabled, const FText& Description, const FText& ToolTip = FText::GetEmpty());
+	UFloatInputSettingWidget* AddFloatInputRow(const float InitialValue, bool bEnabled, const FText& InDescription, const FText& InToolTipText = FText::GetEmpty());
 
 protected:
 
@@ -32,6 +34,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta=(AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> CheckBoxSettingClass;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> FloatInputSettingClass;
 
 	TArray<UUserWidget*> Rows;
 };
