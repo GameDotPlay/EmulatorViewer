@@ -16,10 +16,15 @@ void UFloatInputSettingWidget::ValidateFloatInput(const FText& Text, ETextCommit
 {
 	if (Text.IsEmptyOrWhitespace() || !Text.IsNumeric())
 	{
-		this->SetFloatValue(this->Value);
+		this->SetValue(this->Value);
+		this->OnTextInputValidatedDelegate.Broadcast(this->Value);
+		return;
 	}
 
 	this->Value = FCString::Atof(*Text.ToString());
+	this->SetValue(this->Value);
+
+	this->OnTextInputValidatedDelegate.Broadcast(this->Value);
 }
 
 void UFloatInputSettingWidget::SetToolTip(const FText& InToolTipText)
@@ -28,9 +33,13 @@ void UFloatInputSettingWidget::SetToolTip(const FText& InToolTipText)
 	this->SettingLabel->SetToolTipText(InToolTipText);
 }
 
-void UFloatInputSettingWidget::SetFloatValue(float InValue)
+void UFloatInputSettingWidget::SetLabel(const FText& InLabelText)
 {
-	FText TextValue = FText::AsNumber(InValue);
-	this->InputTextBox->SetText(TextValue);
+	this->SettingLabel->SetText(InLabelText);
+}
+
+void UFloatInputSettingWidget::SetValue(float InValue)
+{
 	this->Value = InValue;
+	this->InputTextBox->SetText(FText::AsNumber(InValue));
 }

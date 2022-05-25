@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/EditableTextBox.h"
 #include "FloatInputSettingWidget.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTextInputValidated, float, Value);
 
 /**
  * 
@@ -16,17 +19,22 @@ class EMULATORVIEWER_API UFloatInputSettingWidget : public UUserWidget
 	
 public:
 
-	void SetToolTip(const FText& InToolTipText);
+	UPROPERTY()
+	FOnTextInputValidated OnTextInputValidatedDelegate;
 
-	float GetFloatValue() const { return this->Value; }
+	float GetValue() const { return this->Value; }
 
-	void SetFloatValue(float InValue);
+	FText GetValueText() const { return this->InputTextBox->Text; }
 
-	UPROPERTY(meta = (BindWidget))
-	class UEditableTextBox* InputTextBox;
+	UEditableTextBox* GetEditableTextBoxWidget() const { return this->InputTextBox; }
 
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* SettingLabel;
+	void SetValue(float InValue);
+
+	void SetEnabledState(bool bEnabled) { this->InputTextBox->SetIsEnabled(bEnabled); }
+
+	void SetToolTip(const FText& InToolTipText = FText::GetEmpty());
+
+	void SetLabel(const FText& InLabelText);
 
 protected:
 
@@ -38,4 +46,10 @@ private:
 
 	UFUNCTION()
 	void ValidateFloatInput(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UPROPERTY(meta = (BindWidget))
+	class UEditableTextBox* InputTextBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* SettingLabel;
 };
