@@ -20,6 +20,8 @@ FReply UDetailsPopupWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry,
 {
 	Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
+	this->bMouseDown = true;
+
 	/*const TShared
 	FReply Reply = FReply::DetectDrag()*/
 
@@ -30,7 +32,7 @@ FReply UDetailsPopupWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry,
 FReply UDetailsPopupWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
-	
+	this->bMouseDown = false;
 	return FReply::Handled();
 }
 
@@ -52,13 +54,19 @@ void UDetailsPopupWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaT
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if (this->bMouseDown)
-	{
+	FVector2D MousePos;
+	this->PlayerController->GetMousePosition(MousePos.X, MousePos.Y);
+	UE_LOG(LogTemp, Warning, TEXT("Mouse - X:%f, Y:%f"), MousePos.X, MousePos.Y);
+
+	FGeometry AbsoluteGeometry = this->GetCachedGeometry();
+	UE_LOG(LogTemp, Warning, TEXT("PopupAbsolute - X:%f, Y:%f"), AbsoluteGeometry.GetAbsolutePosition().X, AbsoluteGeometry.GetAbsolutePosition().Y);
+
+	//if (this->bMouseDown)
+	//{
 		if (IsValid(this->ParentSlot))
 		{
-			FVector2D MousePos;
-			this->PlayerController->GetMousePosition(MousePos.X, MousePos.Y);
 			this->ParentSlot->SetPosition(MousePos);
+			UE_LOG(LogTemp, Warning, TEXT("Popup - X:%f, Y:%f"), ParentSlot->GetPosition().X, ParentSlot->GetPosition().Y);
 		}
-	}
+	//}
 }

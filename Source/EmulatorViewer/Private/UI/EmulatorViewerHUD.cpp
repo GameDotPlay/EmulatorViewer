@@ -54,6 +54,8 @@ void AEmulatorViewerHUD::ConfigurePopupCanvasSlot(UCanvasPanelSlot* Slot) const
 	if (IsValid(Slot))
 	{
 		Slot->SetAutoSize(true);
+		FAnchors Anchors = FAnchors(0, 0, 0, 0);
+		Slot->SetAnchors(Anchors);
 		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		FVector2D MousePos;
 		PC->GetMousePosition(MousePos.X, MousePos.Y);
