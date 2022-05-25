@@ -4,6 +4,7 @@
 #include "TimerManager.h"
 #include "UI/DetailsPopupContentWidget.h"
 #include "Components/CheckBox.h"
+#include "UI/FloatInputSettingWidget.h"
 
 // Sets default values
 AItemSpawner::AItemSpawner()
@@ -37,6 +38,7 @@ void AItemSpawner::InitializeTimer()
 	{
 		if (this->bEnabled)
 		{
+			GetWorldTimerManager().ClearTimer(this->SpawnTimerHandle);
 			GetWorldTimerManager().SetTimer(this->SpawnTimerHandle, this, &AItemSpawner::SpawnItem, this->SpawnTimerInterval, true, this->StartDelay);
 			return;
 		}
@@ -74,6 +76,7 @@ void AItemSpawner::SpawnItem()
 		{
 			this->NumberOfSpawnedItems++;
 			this->OwnedItems.Emplace(ItemSpawned);
+			ItemSpawned->SetParent(this);
 		}
 	}
 }
@@ -128,32 +131,86 @@ void AItemSpawner::Disable()
 
 void AItemSpawner::DetailsPopupInteract(UDetailsPopupContentWidget* ContentWidget)
 {
-	ECheckBoxState CurrentState;
-	if (this->bEnabled)
-	{
-		CurrentState = ECheckBoxState::Checked;
-	}
-	else
-	{
-		CurrentState = ECheckBoxState::Unchecked;
-	}
-
-	UCheckBox* EnabledCheckBox = ContentWidget->AddCheckBoxRow(CurrentState, !this->bUsingGlobalSettings, FText::FromString(TEXT("Enabled")), FText::FromString(TEXT("This setting enabled or disables this item spawner depending on the state of the check box.")));
-	
-	if (EnabledCheckBox)
+	UCheckBox* EnabledCheckBox = ContentWidget->AddCheckBoxRow(this->bEnabled, !this->bUsingGlobalSettings, FText::FromString(TEXT("Enabled")), FText::FromString(TEXT("Enable or disable this item spawner.")));
+	if (IsValid(EnabledCheckBox))
 	{
 		EnabledCheckBox->OnCheckStateChanged.AddUniqueDynamic(this, &AItemSpawner::EnabledChanged);
+	}
+
+	UCheckBox* RandomizeScaleCheckBox = ContentWidget->AddCheckBoxRow(this->bRandomizeScale, !this->bUsingGlobalSettings, FText::FromString(TEXT("Randomize Item Scale")), FText::FromString(TEXT("Randomize the scale of spawned items.")));
+	if (IsValid(RandomizeScaleCheckBox))
+	{
+		RandomizeScaleCheckBox->OnCheckStateChanged.AddUniqueDynamic(this, &AItemSpawner::RandomizeScaleChanged);
+	}
+
+	UFloatInputSettingWidget* BaseScaleModiferTextBox = nullptr;
+	BaseScaleModiferTextBox = ContentWidget->AddFloatInputRow(this->BaseScaleModifier, !this->bUsingGlobalSettings, FText::FromString(TEXT("Base scale modifier")), FText::FromString(TEXT("All items spawned will have their scales in all three axes multiplied by this value.")));
+	if (BaseScaleModiferTextBox)
+	{
+		BaseScaleModiferTextBox->OnTextInputValidatedDelegate.AddUniqueDynamic(this, &AItemSpawner::BaseScaleModifierChanged);
+	}
+
+	UFloatInputSettingWidget* MinScaleModiferTextBox = nullptr;
+	MinScaleModiferTextBox = ContentWidget->AddFloatInputRow(this->MinScaleModifier, !this->bUsingGlobalSettings, FText::FromString(TEXT("Minimum scale modifier")), FText::FromString(TEXT("If randomize scale is enabled, this is the minimum value the item scale will be modified by.")));
+	if (MinScaleModiferTextBox)
+	{
+		MinScaleModiferTextBox->OnTextInputValidatedDelegate.AddUniqueDynamic(this, &AItemSpawner::MinScaleModifierChanged);
+	}
+
+	UFloatInputSettingWidget* MaxScaleModiferTextBox = nullptr;
+	MaxScaleModiferTextBox = ContentWidget->AddFloatInputRow(this->MaxScaleModifier, !this->bUsingGlobalSettings, FText::FromString(TEXT("Maximum scale modifier")), FText::FromString(TEXT("If randomize scale is enabled, this is the maximum value the item scale will be modified by.")));
+	if (MaxScaleModiferTextBox)
+	{
+		MaxScaleModiferTextBox->OnTextInputValidatedDelegate.AddUniqueDynamic(this, &AItemSpawner::MaxScaleModifierChanged);
+	}
+
+	UFloatInputSettingWidget* StartDelayTextBox = nullptr;
+	StartDelayTextBox = ContentWidget->AddFloatInputRow(this->StartDelay, !this->bUsingGlobalSettings, FText::FromString(TEXT("Start delay")), FText::FromString(TEXT("The time in seconds to wait after enabled to begin spawning items.")));
+	if (StartDelayTextBox)
+	{
+		StartDelayTextBox->OnTextInputValidatedDelegate.AddUniqueDynamic(this, &AItemSpawner::StartDelayChanged);
+	}
+
+	UFloatInputSettingWidget* SpawnTimerIntervalTextBox = nullptr;
+	SpawnTimerIntervalTextBox = ContentWidget->AddFloatInputRow(this->SpawnTimerInterval, !this->bUsingGlobalSettings, FText::FromString(TEXT("Spawn timer interval")), FText::FromString(TEXT("Interval in seconds between spawning items.")));
+	if (SpawnTimerIntervalTextBox)
+	{
+		SpawnTimerIntervalTextBox->OnTextInputValidatedDelegate.AddUniqueDynamic(this, &AItemSpawner::SpawnTimerIntervalChanged);
 	}
 }
 
 void AItemSpawner::EnabledChanged(bool bIsChecked)
 {
-	if (bIsChecked)
-	{
-		this->Enable();
-	}
-	else
-	{
-		this->Disable();
-	}
+	(bIsChecked) ? this->Enable() : this->Disable();
+}
+
+void AItemSpawner::RandomizeScaleChanged(bool bIsChecked)
+{
+	this->bRandomizeScale = bIsChecked;
+}
+
+void AItemSpawner::BaseScaleModifierChanged(float Value)
+{
+	this->BaseScaleModifier = Value;
+}
+
+void AItemSpawner::MinScaleModifierChanged(float Value)
+{
+	this->MinScaleModifier = Value;
+}
+
+void AItemSpawner::MaxScaleModifierChanged(float Value)
+{
+	this->MaxScaleModifier = Value;
+}
+
+void AItemSpawner::StartDelayChanged(float Value)
+{
+	this->StartDelay = Value;
+}
+
+void AItemSpawner::SpawnTimerIntervalChanged(float Value)
+{
+	this->SpawnTimerInterval = Value;
+	this->InitializeTimer();
 }

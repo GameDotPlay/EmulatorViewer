@@ -32,29 +32,7 @@ public:
 
 	int32 GetNumberOfSpawnedItems() const { return this->NumberOfSpawnedItems; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	UStaticMeshComponent* VisibleMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	bool bEnabled = true;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float BaseScaleModifier = 2.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float SpawnTimerInterval = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float StartDelay = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	bool bRandomizeScale = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float MinScaleModifier = 1.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner")
-	float MaxScaleModifier = 1.f;
+	int32 GetNumberOfItemsInWorld() const { return this->OwnedItems.Num(); }
 
 protected:
 	// Called when the game starts or when spawned
@@ -65,13 +43,37 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<class AItem>> Items;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* VisibleMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	bool bEnabled = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	float BaseScaleModifier = 2.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	float SpawnTimerInterval = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	float StartDelay = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	bool bRandomizeScale = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	float MinScaleModifier = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
+	float MaxScaleModifier = 1.f;
+
 	struct FTimerHandle SpawnTimerHandle;
 
-	int32 NumberOfSpawnedItems = 0.f;
+	int32 NumberOfSpawnedItems = 0;
 
 	TArray<AItem*> OwnedItems;
 
-	bool bUsingGlobalSettings = true;
+	bool bUsingGlobalSettings = false;
 
 	void SpawnItem();
 
@@ -79,4 +81,22 @@ private:
 
 	UFUNCTION()
 	void EnabledChanged(bool bIsChecked);
+
+	UFUNCTION()
+	void RandomizeScaleChanged(bool bIsChecked);
+
+	UFUNCTION()
+	void BaseScaleModifierChanged(float Value);
+
+	UFUNCTION()
+	void MinScaleModifierChanged(float Value);
+
+	UFUNCTION()
+	void MaxScaleModifierChanged(float Value);
+
+	UFUNCTION()
+	void StartDelayChanged(float Value);
+
+	UFUNCTION()
+	void SpawnTimerIntervalChanged(float Value);
 };
