@@ -6,24 +6,27 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+class AItemSpawner;
+
 UCLASS()
 class EMULATORVIEWER_API AItem : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	AItem();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	void SetParent(const AItemSpawner* InParent) { this->Parent = InParent; }
+
+	const AItemSpawner* GetParent() const { return this->Parent; }
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Item")
 	UStaticMeshComponent* ItemMesh;
+
+	const AItemSpawner* Parent = nullptr;
 };
