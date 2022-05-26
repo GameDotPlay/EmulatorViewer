@@ -15,7 +15,13 @@ void UTransportStraight::BeginPlay()
 
 	// Cache references.
 	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
-	this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent())->GetBodyInstance();
+	TArray<UActorComponent*> Components;
+	Components = this->GetOwner()->GetComponentsByTag(UStaticMeshComponent::StaticClass(), FName(TEXT("PhysicsMesh")));
+	if (Components.Num() > 0 && IsValid(Components[0]))
+	{
+		this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(Components[0])->GetBodyInstance();
+	}
+
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
 }
 
