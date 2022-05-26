@@ -20,6 +20,9 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SceneRoot = nullptr;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PhysicsMesh = nullptr;
