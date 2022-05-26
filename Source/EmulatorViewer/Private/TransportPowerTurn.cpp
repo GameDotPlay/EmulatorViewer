@@ -1,3 +1,4 @@
+
 #include "TransportPowerTurn.h"
 #include "DrawDebugHelpers.h"
 
@@ -17,6 +18,7 @@ void UTransportPowerTurn::BeginPlay()
 	Super::BeginPlay();
 
 	// Cache references.
+	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
 	this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent())->GetBodyInstance();
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
 
@@ -28,7 +30,7 @@ void UTransportPowerTurn::BeginPlay()
 	Radius.Emplace(OuterRadius - (Width * 0.95f));
 	Radius.Emplace(OuterRadius - (Width * 0.5f));
 	Radius.Emplace(OuterRadius - (Width * 0.05f));
-	AngularMultiplier = Speed / (Radius[(int32)SpeedReference]); // AngularVelocity = DesiredLinearSpeed / Radius;
+	AngularMultiplier = (this->Speed * this->AccelerationFactor) / (Radius[(int32)SpeedReference]); // AngularVelocity = DesiredLinearSpeed / Radius;
 
 	// Set center of mass equal to mesh origin. SetAngularVelocityInRadians() in PhysicsTick() always rotates around center of mass.
 	FVector COMOffset = (OriginalTransform.GetLocation() - ConveyorBodyInstance->GetCOMPosition());
@@ -42,6 +44,10 @@ void UTransportPowerTurn::BeginPlay()
 void UTransportPowerTurn::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// Still WIP. Speed of texture doesn't quite match up to item speed on belt. Texture is too slow.
+	float MaterialPanSpeed = this->Speed * this->AccelerationFactor / 100.f;
+	this->ConveyorMesh->SetVectorParameterValueOnMaterials(FName("PanSpeed"), FVector(0, MaterialPanSpeed, 0));
 
 	// Add custom physics on RootComponent's BodyInstance
 	if (this->ConveyorBodyInstance)

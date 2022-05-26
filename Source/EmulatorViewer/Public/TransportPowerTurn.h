@@ -6,6 +6,7 @@
 
 #define CENTIMETERSTOFEET 1.f / 30.48f
 
+
 UENUM()
 enum class ESpeedReference : int32
 {
@@ -47,7 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Conveyor")
 	ESpeedReference SpeedReference = ESpeedReference::Middle;
 
-	float GetSpeedFPM() const { return this->Speed * CENTIMETERSTOFEET; }
+	float GetSpeedFPM() const { return this->Speed * 60.f * CENTIMETERSTOFEET; }
 
 protected:
 
@@ -57,9 +58,15 @@ protected:
 private:
 
 	FTransform OriginalTransform;
+
 	FBodyInstance* ConveyorBodyInstance = nullptr;
+
+	UStaticMeshComponent* ConveyorMesh = nullptr;
+
 	float AngularMultiplier;
+
 	TArray<float> Radius;
+
 	float OuterRadius;
 
 	UPROPERTY(VisibleAnywhere, Category = "Conveyor")
@@ -67,4 +74,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Conveyor", DisplayName = "Width (cm)")
 	float Width = 152.4f;
+
+	float AccelerationFactor = 1.f;
 };
