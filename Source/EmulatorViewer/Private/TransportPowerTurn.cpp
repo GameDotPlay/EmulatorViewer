@@ -2,24 +2,27 @@
 #include "TransportPowerTurn.h"
 #include "DrawDebugHelpers.h"
 
-// Sets default values for this component's properties
 UTransportPowerTurn::UTransportPowerTurn()
 {
-	// Enable this component to tick every frame.
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// Bind the custom physics tick.
 	OnCalculateCustomPhysics.BindUObject(this, &UTransportPowerTurn::CustomPhysics);
 }
 
-// Called when the game starts
 void UTransportPowerTurn::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// Cache references.
 	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
-	this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent())->GetBodyInstance();
+	TArray<UActorComponent*> Components;
+	Components = this->GetOwner()->GetComponentsByTag(UStaticMeshComponent::StaticClass(), FName(TEXT("PhysicsMesh")));
+	if (Components.Num() > 0 && IsValid(Components[0]))
+	{
+		this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(Components[0])->GetBodyInstance();
+	}
+
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
 
 	// Calculate radius of power turn. This affects the calculation of angular velocity depending on speed reference setting.

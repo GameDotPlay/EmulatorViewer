@@ -31,7 +31,6 @@ public:
 
 	UTransportPowerTurn();
 
-	// Called every rendering frame.
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	// Custom physics delegate
@@ -52,7 +51,6 @@ public:
 
 protected:
 
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 private:
@@ -69,7 +67,7 @@ private:
 
 	float OuterRadius;
 
-	UPROPERTY(VisibleAnywhere, Category = "Conveyor")
+	UPROPERTY(EditAnywhere, Category = "Conveyor")
 	EDirectionType Direction = EDirectionType::RightTurn;
 
 	UPROPERTY(VisibleAnywhere, Category = "Conveyor", DisplayName = "Width (cm)")
