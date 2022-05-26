@@ -1,10 +1,8 @@
 
 #include "TransportStraight.h"
 
-// Sets default values for this component's properties
 UTransportStraight::UTransportStraight()
 {
-	// Enable this component to tick every frame.
 	PrimaryComponentTick.bCanEverTick = true;
 
 	OnCalculateCustomPhysics.BindUObject(this, &UTransportStraight::CustomPhysics);
@@ -16,14 +14,18 @@ void UTransportStraight::BeginPlay()
 	Super::BeginPlay();
 
 	// Cache references.
+	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
 	this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent())->GetBodyInstance();
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
 }
 
-// Called every frame
 void UTransportStraight::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// Still WIP. Speed of texture doesn't quite match up to item speed on belt. Texture is too slow.
+	float MaterialPanSpeed = this->Speed * this->AccelerationFactor / 100.f;
+	this->ConveyorMesh->SetVectorParameterValueOnMaterials(FName("PanSpeed"), FVector(0, MaterialPanSpeed, 0));
 
 	// Add custom physics on RootComponent's BodyInstance
 	if (this->ConveyorBodyInstance) 
@@ -44,7 +46,7 @@ void UTransportStraight::PhysicsTick(float SubstepDeltaTime)
 	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
 
 	// Translate forward.
-	this->ConveyorBodyInstance->SetLinearVelocity((int32)this->Direction * FVector::ForwardVector * Speed, false, true);
+	this->ConveyorBodyInstance->SetLinearVelocity((int32)this->Direction * FVector::ForwardVector * this->Speed * this->AccelerationFactor, false, true);
 }
 
 void UTransportStraight::CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance) 

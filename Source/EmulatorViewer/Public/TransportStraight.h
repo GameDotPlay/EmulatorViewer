@@ -24,15 +24,12 @@ public:
 
 	UTransportStraight();
 
-	// Custom physics delegate
 	FCalculateCustomPhysics OnCalculateCustomPhysics;
 	void CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance);
 
-	// Event called every physics tick and sub-step.
 	UFUNCTION()
 	void PhysicsTick(float SubstepDeltaTime);
 
-	// Called every rendering frame.
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	UPROPERTY(EditAnywhere, Category = "Conveyor", DisplayName = "Speed (cm/s)")
@@ -41,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Conveyor")
 	EDirection Direction = EDirection::Forward;
 
-	float GetSpeedFPM() const { return this->Speed * CENTIMETERSTOFEET; }
+	float GetSpeedFPM() const { return this->Speed * 60.f * CENTIMETERSTOFEET; }
 
 protected:
 
@@ -50,8 +47,11 @@ protected:
 private:
 
 	FTransform OriginalTransform;
-	FBodyInstance* ConveyorBodyInstance;
+	FBodyInstance* ConveyorBodyInstance = nullptr;
+	UStaticMeshComponent* ConveyorMesh = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Conveyor", DisplayName = "Width (cm)")
 	float Width = 152.4f;
+
+	float AccelerationFactor = 1.f;
 };
