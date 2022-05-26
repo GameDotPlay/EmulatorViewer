@@ -1,9 +1,9 @@
+
 #include "Conveyor.h"
 
 // Sets default values
 AConveyor::AConveyor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	this->PhysicsMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PhysicsMesh"));
