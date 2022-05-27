@@ -15,12 +15,12 @@ void UTransportPowerTurn::BeginPlay()
 	Super::BeginPlay();
 
 	// Cache references.
-	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
 	TArray<UActorComponent*> Components;
 	Components = this->GetOwner()->GetComponentsByTag(UStaticMeshComponent::StaticClass(), FName(TEXT("PhysicsMesh")));
 	if (Components.Num() > 0 && IsValid(Components[0]))
 	{
-		this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(Components[0])->GetBodyInstance();
+		this->ConveyorMesh = Cast<UStaticMeshComponent>(Components[0]);
+		this->ConveyorBodyInstance = this->ConveyorMesh->GetBodyInstance();
 	}
 
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
@@ -38,7 +38,11 @@ void UTransportPowerTurn::BeginPlay()
 	// Set center of mass equal to mesh origin. SetAngularVelocityInRadians() in PhysicsTick() always rotates around center of mass.
 	FVector COMOffset = (OriginalTransform.GetLocation() - ConveyorBodyInstance->GetCOMPosition());
 	FRotator Rotation = OriginalTransform.GetRotation().Rotator();
-	COMOffset = COMOffset.RotateAngleAxis(-Rotation.Yaw, FVector::UpVector); // Remove any rotation the mesh may have from the calculation of COMOffset.
+
+	// Remove any rotation the mesh may have from the calculation of COMOffset.
+	COMOffset = COMOffset.RotateAngleAxis(-Rotation.Yaw, FVector::UpVector); 
+	COMOffset = COMOffset.RotateAngleAxis(-Rotation.Roll, FVector::ForwardVector);
+	COMOffset = COMOffset.RotateAngleAxis(-Rotation.Pitch, FVector::RightVector);
 	ConveyorBodyInstance->COMNudge = COMOffset;
 	ConveyorBodyInstance->UpdateMassProperties();
 }
@@ -49,7 +53,7 @@ void UTransportPowerTurn::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Still WIP. Speed of texture doesn't quite match up to item speed on belt. Texture is too slow.
-	float MaterialPanSpeed = this->Speed * this->AccelerationFactor / 100.f;
+	float MaterialPanSpeed = -(float)this->Direction * this->Speed * this->AccelerationFactor / 100.f;
 	this->ConveyorMesh->SetVectorParameterValueOnMaterials(FName("PanSpeed"), FVector(0, MaterialPanSpeed, 0));
 
 	// Add custom physics on RootComponent's BodyInstance
