@@ -14,12 +14,13 @@ void UTransportStraight::BeginPlay()
 	Super::BeginPlay();
 
 	// Cache references.
-	this->ConveyorMesh = Cast<UStaticMeshComponent>(this->GetOwner()->GetRootComponent());
+	this->OwnerRoot = Cast<USceneComponent>(this->GetOwner()->GetRootComponent());
 	TArray<UActorComponent*> Components;
 	Components = this->GetOwner()->GetComponentsByTag(UStaticMeshComponent::StaticClass(), FName(TEXT("PhysicsMesh")));
 	if (Components.Num() > 0 && IsValid(Components[0]))
 	{
-		this->ConveyorBodyInstance = Cast<UStaticMeshComponent>(Components[0])->GetBodyInstance();
+		this->ConveyorMesh = Cast<UStaticMeshComponent>(Components[0]);
+		this->ConveyorBodyInstance = this->ConveyorMesh->GetBodyInstance();
 	}
 
 	this->OriginalTransform = this->ConveyorBodyInstance->GetUnrealWorldTransform();
@@ -52,7 +53,7 @@ void UTransportStraight::PhysicsTick(float SubstepDeltaTime)
 	this->ConveyorBodyInstance->SetInstanceSimulatePhysics(true);
 
 	// Translate forward.
-	this->ConveyorBodyInstance->SetLinearVelocity((int32)this->Direction * FVector::ForwardVector * this->Speed * this->AccelerationFactor, false, true);
+	this->ConveyorBodyInstance->SetLinearVelocity((int32)this->Direction * this->OwnerRoot->GetForwardVector() * this->Speed * this->AccelerationFactor, false, true);
 }
 
 void UTransportStraight::CustomPhysics(float DeltaTime, FBodyInstance* BodyInstance) 

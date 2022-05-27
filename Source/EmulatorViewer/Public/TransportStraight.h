@@ -49,6 +49,7 @@ private:
 	FTransform OriginalTransform;
 	FBodyInstance* ConveyorBodyInstance = nullptr;
 	UStaticMeshComponent* ConveyorMesh = nullptr;
+	USceneComponent* OwnerRoot = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Conveyor", DisplayName = "Width (cm)")
 	float Width = 152.4f;
