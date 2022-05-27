@@ -5,7 +5,7 @@ AConveyor::AConveyor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	this->SceneRoot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SceneRoot"));
+	this->SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	this->SetRootComponent(this->SceneRoot);
 
 	this->PhysicsMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PhysicsMesh"));

@@ -22,7 +22,7 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SceneRoot = nullptr;
+	USceneComponent* SceneRoot = nullptr;
 	
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PhysicsMesh = nullptr;
