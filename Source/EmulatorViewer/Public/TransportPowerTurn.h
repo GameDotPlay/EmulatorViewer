@@ -67,7 +67,7 @@ private:
 
 	float OuterRadius;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Conveyor")
+	UPROPERTY(EditAnywhere, Category = "Conveyor", meta = (AllowPrivateAcess = "true"))
 	EDirectionType Direction = EDirectionType::RightTurn;
 
 	UPROPERTY(VisibleAnywhere, Category = "Conveyor", DisplayName = "Width (cm)")
