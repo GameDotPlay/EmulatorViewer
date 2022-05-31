@@ -1,6 +1,9 @@
 # Visual Studio 2015 user specific files
 .vs/
 
+# Blender backup files
+*.blend1
+
 # Compiled Object files
 *.slo
 *.lo
