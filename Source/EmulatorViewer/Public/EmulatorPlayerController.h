@@ -39,6 +39,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	virtual void PlayerTick(float DeltaTime) override;
+
 private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
@@ -85,6 +87,8 @@ private:
 
 	void RightClickInteract();
 
+	bool MouseSelection(AActor* HitActor);
+
 	UInteractableHighlighting* GetHighlightingComponent(AActor* Actor);
 
 #pragma region InputBindings
@@ -98,6 +102,8 @@ private:
 	void HandleKeyboardF();
 
 	void HandleKeyboardEND();
+
+	void HandleKeyboardE();
 
 	void HandleMiddleMouseButtonPressed();
 

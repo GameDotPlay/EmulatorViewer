@@ -25,6 +25,13 @@ void AEmulatorPlayerController::BeginPlay()
 	this->SetObserveInteractionMode();
 }
 
+void AEmulatorPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+
+}
+
 void AEmulatorPlayerController::ToggleControlMode()
 {
 	switch (this->CurrentControlMode)
@@ -84,30 +91,35 @@ void AEmulatorPlayerController::SetFullMenuInteractionMode()
 {
 	this->SetInputMode(FInputModeUIOnly());
 	this->CurrentInteractionMode = FInteractionMode::FullMenuMode;
+	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
 void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::PopupMenuMode;
+	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
 void AEmulatorPlayerController::SetObserveInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::ObserveMode;
+	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
 void AEmulatorPlayerController::SetInteractInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::InteractMode;
+	this->CurrentMouseCursor = EMouseCursor::GrabHand;
 }
 
 void AEmulatorPlayerController::SetBuildInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::BuildMode;
+	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
 FInputModeGameAndUI AEmulatorPlayerController::GetDefaultInputMode()
@@ -128,6 +140,7 @@ void AEmulatorPlayerController::SetupInputComponent()
 	this->InputComponent->BindAction("Keyboard3", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboard3);
 	this->InputComponent->BindAction("KeyboardF", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardF);
 	this->InputComponent->BindAction("KeyboardEND", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardEND);
+	this->InputComponent->BindAction("KeyboardE", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardE);
 
 	this->InputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleMiddleMouseButtonPressed);
 	this->InputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Released, this, &AEmulatorPlayerController::HandleMiddleMouseButtonReleased);
@@ -147,34 +160,7 @@ void AEmulatorPlayerController::LeftClickSelect()
 	this->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
 	AActor* HitActor = HitResult.GetActor();
 
-	if (HitActor)
-	{
-		if (this->CurrentSelection == HitActor)
-		{
-			return;
-		}
-
-		if (this->CurrentSelection != nullptr)
-		{
-			// Turn off current selection highlighting.
-			UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(this->CurrentSelection);
-			if (HighlightComponent)
-			{
-				HighlightComponent->SetSelectedDisabled();
-			}
-		}
-		
-		UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(HitActor);
-		if (HighlightComponent)
-		{
-			HighlightComponent->SetSelectedActive();
-			this->CurrentSelection = HitActor;
-			FVector HitActorExtents;
-			FVector HitActorOrigin;
-			HitActor->GetActorBounds(true, HitActorOrigin, HitActorExtents, true);
-			DrawDebugString(GetWorld(), HitActorOrigin + FVector(0, 0, 100), FString(*HitActor->GetActorNameOrLabel()), nullptr, FColor::Yellow, 1.f, true, 2.f);
-		}
-	}
+	this->MouseSelection(HitActor);
 }
 
 void AEmulatorPlayerController::RightClickInteract()
@@ -183,42 +169,47 @@ void AEmulatorPlayerController::RightClickInteract()
 	this->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
 	AActor* HitActor = HitResult.GetActor();
 
-	if (HitActor != nullptr)
+	if (!this->MouseSelection(HitActor))
 	{
-		if (this->CurrentSelection != HitActor)
+		return;
+	}
+
+	IPopulateDetailsInterface* ActorInterface = Cast<IPopulateDetailsInterface>(HitActor);
+	if (ActorInterface)
+	{
+		UDetailsPopupWidget* DetailsPopup = Cast<UDetailsPopupWidget>(CreateWidget(this, this->DetailsPopupClass));
+		ActorInterface->DetailsPopupInteract(DetailsPopup->GetContentWidget());
+		DetailsPopup->SetHeaderText(FText::FromString(HitActor->GetActorNameOrLabel()));
+
+		this->MainHUD->AddDetailsPopup(DetailsPopup);
+	}
+}
+
+bool AEmulatorPlayerController::MouseSelection(AActor* HitActor)
+{
+	if (!IsValid(HitActor) || this->CurrentSelection == HitActor)
+	{
+		return false;
+	}
+
+	if (IsValid(this->CurrentSelection))
+	{
+		// Turn off current selection highlighting.
+		UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(this->CurrentSelection);
+		if (IsValid(HighlightComponent))
 		{
-			if (this->CurrentSelection != nullptr)
-			{
-				// Turn off current selection highlighting.
-				UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(this->CurrentSelection);
-				if (HighlightComponent)
-				{
-					HighlightComponent->SetSelectedDisabled();
-				}
-			}
-
-			UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(HitActor);
-			if (HighlightComponent)
-			{
-				HighlightComponent->SetSelectedActive();
-				this->CurrentSelection = HitActor;
-				FVector HitActorExtents;
-				FVector HitActorOrigin;
-				HitActor->GetActorBounds(true, HitActorOrigin, HitActorExtents, true);
-				DrawDebugString(GetWorld(), HitActorOrigin + FVector(0, 0, 100), FString(*HitActor->GetActorNameOrLabel()), nullptr, FColor::Yellow, 1.f, true, 2.f);
-			}
-		}
-
-		IPopulateDetailsInterface* ActorInterface = Cast<IPopulateDetailsInterface>(HitActor);
-		if (ActorInterface)
-		{
-			UDetailsPopupWidget* DetailsPopup = Cast<UDetailsPopupWidget>(CreateWidget(this, this->DetailsPopupClass));
-			ActorInterface->DetailsPopupInteract(DetailsPopup->GetContentWidget());
-			DetailsPopup->SetHeaderText(FText::FromString(HitActor->GetActorNameOrLabel()));
-
-			this->MainHUD->AddDetailsPopup(DetailsPopup);
+			HighlightComponent->SetSelectedDisabled();
 		}
 	}
+
+	UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(HitActor);
+	if (IsValid(HighlightComponent))
+	{
+		HighlightComponent->SetSelectedActive();
+		this->CurrentSelection = HitActor;
+	}
+
+	return true;
 }
 
 UInteractableHighlighting* AEmulatorPlayerController::GetHighlightingComponent(AActor* Actor)
@@ -263,17 +254,17 @@ void AEmulatorPlayerController::SetFirstPersonControlMode()
 
 void AEmulatorPlayerController::HandleKeyboard1()
 {
-	this->SetObserveInteractionMode();
+	this->ChangeInteractionMode(FInteractionMode::ObserveMode);
 }
 
 void AEmulatorPlayerController::HandleKeyboard2()
 {
-	this->SetInteractInteractionMode();
+	this->ChangeInteractionMode(FInteractionMode::InteractMode);
 }
 
 void AEmulatorPlayerController::HandleKeyboard3()
 {
-	this->SetBuildInteractionMode();
+	this->ChangeInteractionMode(FInteractionMode::BuildMode);
 }
 
 void AEmulatorPlayerController::HandleKeyboardF()
@@ -285,6 +276,28 @@ void AEmulatorPlayerController::HandleKeyboardF()
 		this->CurrentSelection->GetActorBounds(true, SelectionOrigin, SelectionExtents, true);
 		this->CurrentPawn->KeyboardF(SelectionOrigin);
 	}
+}
+
+void AEmulatorPlayerController::HandleKeyboardE()
+{
+	if (this->CurrentInteractionMode != FInteractionMode::InteractMode)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not in InteractMode, returned."));
+		return;
+	}
+
+	FHitResult HitResult;
+	this->GetHitResultUnderCursor(ECollisionChannel::ECC_PhysicsBody, false, HitResult);
+	AActor* HitActor = HitResult.GetActor();
+
+	if (!IsValid(HitActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HitActor is null."));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Got physics hit: %s"), *HitActor->GetActorNameOrLabel());
+	this->CurrentPawn->KeyboardE(HitResult);
 }
 
 void AEmulatorPlayerController::HandleKeyboardEND()
