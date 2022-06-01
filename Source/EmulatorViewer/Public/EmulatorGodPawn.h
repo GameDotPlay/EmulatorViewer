@@ -30,6 +30,8 @@ public:
 
 	virtual void KeyboardF(FVector Location) override;
 
+	virtual void KeyboardE(FHitResult HitResult) override;
+
 	virtual void KeyboardEND(float NewZ) override;
 
 	virtual void MoveForward(float Value) override;
@@ -85,19 +87,32 @@ private:
 	bool bMouseEdgeScrollEnabled = true;
 
 	UPROPERTY(VisibleAnywhere)
-	class USphereComponent* LookTarget;
+	class USphereComponent* LookTarget = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent* SpringArm;
+	class USpringArmComponent* SpringArm = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* Camera;
+	class UCameraComponent* Camera = nullptr;
+
+	UPROPERTY(VisibleAnywhere)
+	class UPhysicsHandleComponent* PhysicsHandle = nullptr;
 
 	bool bMiddleMousePressed = false;
 
 	APlayerController* PlayerController;
 
 	FVector2D MousePosition;
+
+	FVector CameraTargetVector;
+
+	float CameraTargetVectorLength;
+
+	float MinTargetDistance = 300.f;
+
+	float MaxTargetDistance = 1000.f;
+
+	float DistanceAdjustSensitivity = 1000.f;
 
 	ViewportSize CurrentViewportSize;
 
@@ -106,4 +121,10 @@ private:
 	void Zoom(float Value);
 
 	void MouseEdgeScroll();
+
+	void PhysicsObjectDistanceAdjust(float Value);
+
+	void GrabPhysicsObject(FHitResult HitResult);
+
+	void ReleasePhysicsObject();
 };

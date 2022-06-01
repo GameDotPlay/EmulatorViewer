@@ -6,6 +6,7 @@
 #include "EmulatorPlayerController.h"
 #include "DrawDebugHelpers.h"
 #include "Components/SphereComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 
 // Sets default values
 AEmulatorGodPawn::AEmulatorGodPawn()
@@ -21,6 +22,14 @@ AEmulatorGodPawn::AEmulatorGodPawn()
 
 	this->Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	this->Camera->SetupAttachment(this->SpringArm);
+
+	this->PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>("PhysicsHandle");
+
+	PhysicsHandle->LinearDamping = 30000.f;
+	PhysicsHandle->LinearStiffness = 100000.f;
+	PhysicsHandle->AngularDamping = 50000.f;
+	PhysicsHandle->AngularStiffness = 200000.f;
+	PhysicsHandle->InterpolationSpeed = 17.f;
 }
 
 // Called when the game starts or when spawned
@@ -45,6 +54,16 @@ void AEmulatorGodPawn::Tick(float DeltaTime)
 	if (this->bMouseEdgeScrollEnabled && !this->bMiddleMousePressed)
 	{
 		this->MouseEdgeScroll();
+	}
+
+	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
+	{
+		FVector WorldLocation;
+		FVector WorldDirection;
+		this->PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+		this->CameraTargetVector = WorldLocation + (WorldDirection * this->CameraTargetVectorLength);
+		//DrawDebugLine(GetWorld(), this->Camera->GetComponentLocation(), this->CameraTargetVector, FColor::Red, true, DeltaTime, 0, 8.f);
+		this->PhysicsHandle->SetTargetLocation(this->CameraTargetVector);
 	}
 }
 
@@ -104,6 +123,54 @@ void AEmulatorGodPawn::KeyboardF(FVector Location)
 	this->FocusView(Location);
 }
 
+void AEmulatorGodPawn::KeyboardE(FHitResult HitResult)
+{
+	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("In GodPawn::KeyboardE(), releasing object."));
+		this->ReleasePhysicsObject();
+		return;
+	}
+
+	if (IsValid(this->PhysicsHandle) && !IsValid(this->PhysicsHandle->GrabbedComponent))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("In GodPawn::KeyboardE(), grabbing object."));
+		this->GrabPhysicsObject(HitResult);
+		return;
+	}
+}
+
+void AEmulatorGodPawn::GrabPhysicsObject(FHitResult HitResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("In GodPawn::GrabPhysicsObject()."));
+	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
+	AActor* HitActor = HitResult.GetActor();
+
+	if (!IsValid(HitActor))
+	{
+		return;
+	}
+
+	if (!IsValid(this->PhysicsHandle))
+	{
+		return;
+	}
+
+	this->PhysicsHandle->GrabComponentAtLocationWithRotation(ComponentToGrab, NAME_None, HitActor->GetActorLocation(), FRotator::ZeroRotator);
+	this->CameraTargetVector = HitActor->GetActorLocation() - this->Camera->GetComponentLocation();
+	this->CameraTargetVectorLength = this->CameraTargetVector.Length() - 50.f;
+	this->PlayerController->CurrentMouseCursor = EMouseCursor::GrabHandClosed;
+}
+
+void AEmulatorGodPawn::ReleasePhysicsObject()
+{
+	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
+	{
+		this->PhysicsHandle->ReleaseComponent();
+		this->PlayerController->CurrentMouseCursor = EMouseCursor::GrabHand;
+	}
+}
+
 void AEmulatorGodPawn::KeyboardEND(float NewZ)
 {
 	this->SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, NewZ));
@@ -150,7 +217,14 @@ void AEmulatorGodPawn::MouseYAxis(float Value)
 
 void AEmulatorGodPawn::MouseWheelAxis(float Value)
 {
-	this->Zoom(Value);
+	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
+	{
+		this->PhysicsObjectDistanceAdjust(Value);
+	}
+	else
+	{
+		this->Zoom(Value);
+	}
 }
 
 void AEmulatorGodPawn::FocusView(FVector Location)
@@ -169,5 +243,19 @@ void AEmulatorGodPawn::Zoom(float Value)
 	else if (this->SpringArm->TargetArmLength > MaxTargetArmLength)
 	{
 		this->SpringArm->TargetArmLength = this->MaxTargetArmLength;
+	}
+}
+
+void AEmulatorGodPawn::PhysicsObjectDistanceAdjust(float Value)
+{
+	this->CameraTargetVectorLength += Value * GetWorld()->GetDeltaSeconds() * this->DistanceAdjustSensitivity;
+
+	if (this->CameraTargetVectorLength < this->MinTargetDistance)
+	{
+		this->CameraTargetVectorLength = this->MinTargetDistance;
+	}
+	else if (this->CameraTargetVectorLength > this->MaxTargetDistance)
+	{
+		this->CameraTargetVectorLength = this->MaxTargetDistance;
 	}
 }
