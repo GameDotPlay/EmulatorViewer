@@ -11,6 +11,7 @@ class UDetailsPopupWidget;
 class UCanvasPanel;
 class UPopupContainerWidget;
 class UCanvasPanelSlot;
+class UInteractionModeLabelWidget;
 
 /**
  * 
@@ -26,9 +27,9 @@ public:
 
 	void HidePauseMenu();
 
-	void ShowMainMenu();
+	void ShowInteractionModeLabel();
 
-	void HideMainMenu();
+	void HideInteractionModeLabel();
 
 	void AddDetailsPopup(UDetailsPopupWidget* DetailsPopup);
 
@@ -43,6 +44,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> PopupsCanvasClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> InteractionModeLabelClass;
+
 private:
 
 	UUserWidget* PauseMenu = nullptr;
@@ -50,6 +54,8 @@ private:
 	UUserWidget* MainMenu = nullptr;
 
 	UPopupContainerWidget* PopupsCanvas = nullptr;
+
+	UInteractionModeLabelWidget* InteractionModeLabelWidget = nullptr;
 
 	void InitializePopupsCanvas();
 

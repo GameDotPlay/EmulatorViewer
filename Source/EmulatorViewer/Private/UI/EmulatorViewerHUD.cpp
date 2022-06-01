@@ -7,6 +7,7 @@
 #include "Components/CanvasPanel.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/CanvasPanelSlot.h"
+#include "UI/InteractionModeLabelWidget.h"
 
 void AEmulatorViewerHUD::ShowPauseMenu()
 {
@@ -18,19 +19,27 @@ void AEmulatorViewerHUD::HidePauseMenu()
 
 }
 
-void AEmulatorViewerHUD::ShowMainMenu()
+void AEmulatorViewerHUD::ShowInteractionModeLabel()
 {
-
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	this->InteractionModeLabelWidget = Cast<UInteractionModeLabelWidget>(CreateWidget(PC, this->InteractionModeLabelClass, FName(TEXT("InteractionModeLabelWidget"))));
+	if (IsValid(this->InteractionModeLabelWidget))
+	{
+		this->InteractionModeLabelWidget->AddToViewport();
+	}
 }
 
-void AEmulatorViewerHUD::HideMainMenu()
+void AEmulatorViewerHUD::HideInteractionModeLabel()
 {
-
+	if (IsValid(this->InteractionModeLabelWidget))
+	{
+		this->InteractionModeLabelWidget->RemoveFromParent();
+	}
 }
 
 void AEmulatorViewerHUD::AddDetailsPopup(UDetailsPopupWidget* DetailsPopup)
 {
-	if (DetailsPopup)
+	if (IsValid(DetailsPopup))
 	{
 		if (this->PopupsCanvas == nullptr || !this->PopupsCanvas->IsInViewport())
 		{
