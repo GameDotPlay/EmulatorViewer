@@ -28,6 +28,8 @@ public:
 
 	virtual void KeyboardF(FVector Location) { return; }
 
+	virtual void KeyboardE(FHitResult HitResult) { return; }
+
 	virtual void KeyboardEND(float NewZ) { return; }
 
 	virtual void MoveForward(float Value) { return; }
