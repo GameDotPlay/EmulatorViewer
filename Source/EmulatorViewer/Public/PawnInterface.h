@@ -41,4 +41,8 @@ public:
 	virtual void MouseYAxis(float Value) { return; }
 
 	virtual void MouseWheelAxis(float Value) { return; }
+
+	virtual bool CurrentlyHoldingObject() { return false; }
+
+	virtual void ReleasePhysicsObject() { return; }
 };
