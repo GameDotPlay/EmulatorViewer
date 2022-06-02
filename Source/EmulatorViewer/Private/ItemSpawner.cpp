@@ -29,12 +29,7 @@ void AItemSpawner::BeginPlay()
 
 void AItemSpawner::InitializeTimer()
 {
-	if (!GetWorld())
-	{
-		return;
-	}
-
-	if (GetWorld()->bShouldSimulatePhysics)
+	if (GetWorld() && GetWorld()->bShouldSimulatePhysics)
 	{
 		if (this->bEnabled)
 		{
