@@ -269,7 +269,7 @@ void AEmulatorPlayerController::HandleKeyboard3()
 
 void AEmulatorPlayerController::HandleKeyboardF()
 {
-	if (this->CurrentSelection != nullptr)
+	if (IsValid(this->CurrentSelection))
 	{
 		FVector SelectionExtents;
 		FVector SelectionOrigin;
@@ -282,7 +282,6 @@ void AEmulatorPlayerController::HandleKeyboardE()
 {
 	if (this->CurrentInteractionMode != FInteractionMode::InteractMode)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not in InteractMode, returned."));
 		return;
 	}
 
@@ -290,14 +289,10 @@ void AEmulatorPlayerController::HandleKeyboardE()
 	this->GetHitResultUnderCursor(ECollisionChannel::ECC_PhysicsBody, false, HitResult);
 	AActor* HitActor = HitResult.GetActor();
 
-	if (!IsValid(HitActor))
+	if (IsValid(HitActor) && HitActor->ActorHasTag(FName(TEXT("Item"))))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HitActor is null."));
-		return;
+		this->CurrentPawn->KeyboardE(HitResult);
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Got physics hit: %s"), *HitActor->GetActorNameOrLabel());
-	this->CurrentPawn->KeyboardE(HitResult);
 }
 
 void AEmulatorPlayerController::HandleKeyboardEND()
