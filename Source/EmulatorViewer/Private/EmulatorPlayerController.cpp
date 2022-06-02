@@ -91,6 +91,7 @@ void AEmulatorPlayerController::SetFullMenuInteractionMode()
 {
 	this->SetInputMode(FInputModeUIOnly());
 	this->CurrentInteractionMode = FInteractionMode::FullMenuMode;
+	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -98,6 +99,7 @@ void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::PopupMenuMode;
+	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -105,6 +107,7 @@ void AEmulatorPlayerController::SetObserveInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::ObserveMode;
+	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -112,6 +115,7 @@ void AEmulatorPlayerController::SetInteractInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::InteractMode;
+	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::GrabHand;
 }
 
@@ -119,6 +123,7 @@ void AEmulatorPlayerController::SetBuildInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::BuildMode;
+	this->CurrentBuildModeState = FBuildModeState::Placing;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -280,6 +285,12 @@ void AEmulatorPlayerController::HandleKeyboardF()
 
 void AEmulatorPlayerController::HandleKeyboardE()
 {
+	if (this->CurrentPawn->CurrentlyHoldingObject())
+	{
+		this->CurrentPawn->ReleasePhysicsObject();
+		return;
+	}
+
 	if (this->CurrentInteractionMode != FInteractionMode::InteractMode)
 	{
 		return;

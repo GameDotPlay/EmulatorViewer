@@ -9,8 +9,6 @@ class AEmulatorGodPawn;
 class UInteractableHighlighting;
 class UUserWidget;
 
-
-
 UENUM()
 enum class FControlMode
 {
@@ -26,6 +24,14 @@ enum class FInteractionMode
 	ObserveMode = 2,
 	InteractMode = 3,
 	BuildMode = 4
+};
+
+UENUM()
+enum class FBuildModeState
+{
+	NotBuilding = 0,
+	Placing = 1,
+	Modifying = 2
 };
 
 UCLASS()
@@ -60,6 +66,8 @@ private:
 	FControlMode CurrentControlMode;
 
 	FInteractionMode CurrentInteractionMode;
+
+	FBuildModeState CurrentBuildModeState;
 
 	virtual void SetupInputComponent() override;
 
