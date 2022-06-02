@@ -23,17 +23,36 @@ protected:
 
 private:
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* SceneRoot = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ConveyorTail = nullptr;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ConveyorBody = nullptr;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ConveyorHead = nullptr;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SideStructL = nullptr;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SideStructR = nullptr;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SidePanL = nullptr;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SidePanR = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* TailSnapPoint = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* HeadSnapPoint = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* ItemSpawnPoint = nullptr;
 };
