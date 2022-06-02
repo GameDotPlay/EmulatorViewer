@@ -44,6 +44,10 @@ public:
 
 	virtual void MouseWheelAxis(float Value) override;
 
+	virtual bool CurrentlyHoldingObject() override;
+
+	virtual void ReleasePhysicsObject() override;
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -125,6 +129,4 @@ private:
 	void PhysicsObjectDistanceAdjust(float Value);
 
 	void GrabPhysicsObject(FHitResult HitResult);
-
-	void ReleasePhysicsObject();
 };

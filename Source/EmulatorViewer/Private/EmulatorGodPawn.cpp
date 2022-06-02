@@ -62,7 +62,6 @@ void AEmulatorGodPawn::Tick(float DeltaTime)
 		FVector WorldDirection;
 		this->PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
 		this->CameraTargetVector = WorldLocation + (WorldDirection * this->CameraTargetVectorLength);
-		//DrawDebugLine(GetWorld(), this->Camera->GetComponentLocation(), this->CameraTargetVector, FColor::Red, true, DeltaTime, 0, 8.f);
 		this->PhysicsHandle->SetTargetLocation(this->CameraTargetVector);
 	}
 }
@@ -225,6 +224,11 @@ void AEmulatorGodPawn::MouseWheelAxis(float Value)
 	{
 		this->Zoom(Value);
 	}
+}
+
+bool AEmulatorGodPawn::CurrentlyHoldingObject()
+{
+	return (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent));
 }
 
 void AEmulatorGodPawn::FocusView(FVector Location)
