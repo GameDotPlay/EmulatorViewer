@@ -47,7 +47,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Conveyor")
 	ESpeedReference SpeedReference = ESpeedReference::Middle;
 
-	float GetSpeedFPM() const { return this->Speed * 60.f * CENTIMETERSTOFEET; }
+	float GetSpeedFPM() const { return this->Speed * 60.f * (CENTIMETERSTOFEET); }
 
 protected:
 
