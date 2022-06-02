@@ -3,7 +3,7 @@
 
 AConveyor::AConveyor()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	this->SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	this->SetRootComponent(this->SceneRoot);
