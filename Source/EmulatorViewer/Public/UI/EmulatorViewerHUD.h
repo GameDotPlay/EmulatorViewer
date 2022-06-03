@@ -31,6 +31,8 @@ public:
 
 	void HideInteractionModeLabel();
 
+	void SetInteractionModeLabel(FText InteractionModeText);
+
 	void AddDetailsPopup(UDetailsPopupWidget* DetailsPopup);
 
 protected:

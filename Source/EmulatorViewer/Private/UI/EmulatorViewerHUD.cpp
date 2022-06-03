@@ -37,6 +37,14 @@ void AEmulatorViewerHUD::HideInteractionModeLabel()
 	}
 }
 
+void AEmulatorViewerHUD::SetInteractionModeLabel(FText InteractionModeText)
+{
+	if (IsValid(this->InteractionModeLabelWidget) && !InteractionModeText.IsEmptyOrWhitespace())
+	{
+		this->InteractionModeLabelWidget->SetInteractionModeText(InteractionModeText);
+	}
+}
+
 void AEmulatorViewerHUD::AddDetailsPopup(UDetailsPopupWidget* DetailsPopup)
 {
 	if (IsValid(DetailsPopup))
