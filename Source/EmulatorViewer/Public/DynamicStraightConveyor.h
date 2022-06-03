@@ -36,16 +36,40 @@ private:
 	UStaticMeshComponent* ConveyorHead = nullptr;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SideStructL = nullptr;
+	UStaticMeshComponent* SideStructTailL = nullptr;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SideStructR = nullptr;
+	UStaticMeshComponent* SideStructBodyL = nullptr;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SidePanL = nullptr;
+	UStaticMeshComponent* SideStructHeadL = nullptr;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SidePanR = nullptr;
+	UStaticMeshComponent* SideStructTailR = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SideStructBodyR = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SideStructHeadR = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SidePanTailL = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SidePanBodyL = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SidePanHeadL = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SidePanTailR = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SidePanBodyR = nullptr;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* SidePanHeadR = nullptr;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* TailSnapPoint = nullptr;
