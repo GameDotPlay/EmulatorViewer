@@ -5,9 +5,9 @@
 #include "UI/DetailsPopupWidget.h"
 #include "UI/PopupContainerWidget.h"
 #include "Components/CanvasPanel.h"
-#include "Kismet/GameplayStatics.h"
 #include "Components/CanvasPanelSlot.h"
 #include "UI/InteractionModeLabelWidget.h"
+#include "UI/BuildModeUIWidget.h"
 
 void AEmulatorViewerHUD::ShowPauseMenu()
 {
@@ -21,7 +21,7 @@ void AEmulatorViewerHUD::HidePauseMenu()
 
 void AEmulatorViewerHUD::ShowInteractionModeLabel()
 {
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerController* PC = this->PlayerOwner;
 	this->InteractionModeLabelWidget = Cast<UInteractionModeLabelWidget>(CreateWidget(PC, this->InteractionModeLabelClass, FName(TEXT("InteractionModeLabelWidget"))));
 	if (IsValid(this->InteractionModeLabelWidget))
 	{
@@ -34,6 +34,24 @@ void AEmulatorViewerHUD::HideInteractionModeLabel()
 	if (IsValid(this->InteractionModeLabelWidget))
 	{
 		this->InteractionModeLabelWidget->RemoveFromParent();
+	}
+}
+
+void AEmulatorViewerHUD::ShowBuildModeUI()
+{
+	APlayerController* PC = this->PlayerOwner;
+	this->BuildModeUIWidget = Cast<UBuildModeUIWidget>(CreateWidget(PC, this->BuildModeUIClass, FName(TEXT("BuildModeUI"))));
+	if (IsValid(this->BuildModeUIWidget))
+	{
+		this->BuildModeUIWidget->AddToViewport();
+	}
+}
+
+void AEmulatorViewerHUD::HideBuildModeUI()
+{
+	if (IsValid(this->BuildModeUIWidget))
+	{
+		this->BuildModeUIWidget->RemoveFromParent();
 	}
 }
 
@@ -61,7 +79,7 @@ void AEmulatorViewerHUD::AddDetailsPopup(UDetailsPopupWidget* DetailsPopup)
 
 void AEmulatorViewerHUD::InitializePopupsCanvas()
 {
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerController* PC = this->PlayerOwner;
 	this->PopupsCanvas = Cast<UPopupContainerWidget>(CreateWidget(PC, this->PopupsCanvasClass));
 	this->PopupsCanvas->AddToViewport();
 }
@@ -73,9 +91,8 @@ void AEmulatorViewerHUD::ConfigurePopupCanvasSlot(UCanvasPanelSlot* Slot) const
 		Slot->SetAutoSize(true);
 		FAnchors Anchors = FAnchors(0, 0, 0, 0);
 		Slot->SetAnchors(Anchors);
-		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		FVector2D MousePos;
-		PC->GetMousePosition(MousePos.X, MousePos.Y);
+		this->PlayerOwner->GetMousePosition(MousePos.X, MousePos.Y);
 		Slot->SetPosition(MousePos);
 	}
 }

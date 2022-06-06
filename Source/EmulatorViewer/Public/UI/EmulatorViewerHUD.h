@@ -12,6 +12,7 @@ class UCanvasPanel;
 class UPopupContainerWidget;
 class UCanvasPanelSlot;
 class UInteractionModeLabelWidget;
+class UBuildModeUIWidget;
 
 /**
  * 
@@ -31,7 +32,13 @@ public:
 
 	void HideInteractionModeLabel();
 
+	void ShowBuildModeUI();
+
+	void HideBuildModeUI();
+
 	void SetInteractionModeLabel(FText InteractionModeText);
+
+	UBuildModeUIWidget* GetBuildModeUI() { return this->BuildModeUIWidget; }
 
 	void AddDetailsPopup(UDetailsPopupWidget* DetailsPopup);
 
@@ -49,6 +56,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> InteractionModeLabelClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> BuildModeUIClass;
+
 private:
 
 	UUserWidget* PauseMenu = nullptr;
@@ -58,6 +68,8 @@ private:
 	UPopupContainerWidget* PopupsCanvas = nullptr;
 
 	UInteractionModeLabelWidget* InteractionModeLabelWidget = nullptr;
+
+	UBuildModeUIWidget* BuildModeUIWidget = nullptr;
 
 	void InitializePopupsCanvas();
 
