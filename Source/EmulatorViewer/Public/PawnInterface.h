@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "PawnInterface.generated.h"
 
+class UCameraComponent;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UPawnInterface : public UInterface
@@ -45,4 +47,6 @@ public:
 	virtual bool CurrentlyHoldingObject() { return false; }
 
 	virtual void ReleasePhysicsObject() { return; }
+
+	virtual UCameraComponent* GetCamera() { return nullptr; }
 };
