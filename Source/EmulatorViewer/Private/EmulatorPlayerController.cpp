@@ -6,6 +6,9 @@
 #include "PopulateDetailsInterface.h"
 #include "UI/DetailsPopupWidget.h"
 #include "UI/EmulatorViewerHUD.h"
+#include "UI/BuildModeUIWidget.h"
+#include "DynamicStraightConveyor.h"
+#include "Camera/CameraComponent.h"
 
 void AEmulatorPlayerController::BeginPlay()
 {
@@ -22,6 +25,7 @@ void AEmulatorPlayerController::BeginPlay()
 	this->MainHUD = this->GetHUD<AEmulatorViewerHUD>();
 	check(this->MainHUD);
 
+	this->MainHUD->ShowInteractionModeLabel();
 	this->SetObserveInteractionMode();
 }
 
@@ -106,6 +110,7 @@ void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 void AEmulatorPlayerController::SetObserveInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
+	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Observe Mode")));
 	this->CurrentInteractionMode = FInteractionMode::ObserveMode;
 	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
@@ -114,6 +119,7 @@ void AEmulatorPlayerController::SetObserveInteractionMode()
 void AEmulatorPlayerController::SetInteractInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
+	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Interact Mode")));
 	this->CurrentInteractionMode = FInteractionMode::InteractMode;
 	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::GrabHand;
@@ -122,8 +128,11 @@ void AEmulatorPlayerController::SetInteractInteractionMode()
 void AEmulatorPlayerController::SetBuildInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
+	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Build Mode")));
+	this->MainHUD->ShowBuildModeUI();
+	this->MainHUD->GetBuildModeUI()->GetBuildObjectsMenu()->GetCreateStraightButton()->OnClicked.AddUniqueDynamic(this, &AEmulatorPlayerController::CreateStraightConveyor);
 	this->CurrentInteractionMode = FInteractionMode::BuildMode;
-	this->CurrentBuildModeState = FBuildModeState::Placing;
+	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -234,6 +243,36 @@ UInteractableHighlighting* AEmulatorPlayerController::GetHighlightingComponent(A
 	else
 	{
 		return HighlightComponent;
+	}
+}
+
+void AEmulatorPlayerController::CreateStraightConveyor()
+{
+	this->CurrentBuildModeState = FBuildModeState::Placing;
+
+	// Spawn dynamic straight conveyor.
+	FActorSpawnParameters SpawnParameters;
+	FTransform Transform = FTransform::Identity;
+	ADynamicStraightConveyor* Conveyor = GetWorld()->SpawnActor<ADynamicStraightConveyor>(this->DynamicStraightConveyorClass, Transform, SpawnParameters);
+
+	if (IsValid(Conveyor))
+	{
+		// Set position to floor. Follow mouse cursor.
+		if (1)
+		{
+			FVector WorldLocation;
+			FVector WorldDirection;
+			this->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+			FHitResult OutHit;
+			FVector TraceStart = this->CurrentPawn->GetCamera()->GetComponentLocation();
+			FVector TraceEnd = WorldLocation + (WorldDirection * 10000);
+			FCollisionQueryParams CollisionParams;
+			GetWorld()->LineTraceSingleByProfile(OutHit, TraceStart, TraceEnd, FName(TEXT("Floor")), CollisionParams);
+			if (IsValid(OutHit.GetActor()))
+			{
+
+			}
+		}
 	}
 }
 

@@ -52,6 +52,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> DetailsPopupClass;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> DynamicStraightConveyorClass;
+
 	AEmulatorViewerHUD* MainHUD;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
@@ -98,6 +101,8 @@ private:
 	bool MouseSelection(AActor* HitActor);
 
 	UInteractableHighlighting* GetHighlightingComponent(AActor* Actor);
+
+	void CreateStraightConveyor();
 
 #pragma region InputBindings
 
