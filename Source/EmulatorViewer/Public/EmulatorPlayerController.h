@@ -41,6 +41,8 @@ class EMULATORVIEWER_API AEmulatorPlayerController : public APlayerController
 
 public:
 
+	AActor* GetCurrentSelection() { return this->CurrentSelection; }
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -57,14 +59,9 @@ private:
 
 	AEmulatorViewerHUD* MainHUD;
 
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	float FloorZOffset = 50.f;
-
-	float FloorZ = 0.f;
-
 	AActor* CurrentSelection = nullptr;
 
-	AEmulatorGodPawn* CurrentPawn = nullptr;
+	IPawnInterface* CurrentPawn = nullptr;
 
 	FControlMode CurrentControlMode;
 

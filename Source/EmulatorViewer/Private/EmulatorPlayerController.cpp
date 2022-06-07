@@ -14,13 +14,8 @@ void AEmulatorPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->CurrentPawn = Cast<AEmulatorGodPawn>(this->GetPawn());
+	this->CurrentPawn = Cast<IPawnInterface>(this->GetPawn());
 	check(this->CurrentPawn);
-
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsWithTag(this, FName(TEXT("Floor")), Actors);
-	check(Actors.Num() > 0);
-	this->FloorZ = Actors[0]->GetActorLocation().Z;
 	
 	this->MainHUD = this->GetHUD<AEmulatorViewerHUD>();
 	check(this->MainHUD);
@@ -313,41 +308,17 @@ void AEmulatorPlayerController::HandleKeyboard3()
 
 void AEmulatorPlayerController::HandleKeyboardF()
 {
-	if (IsValid(this->CurrentSelection))
-	{
-		FVector SelectionExtents;
-		FVector SelectionOrigin;
-		this->CurrentSelection->GetActorBounds(true, SelectionOrigin, SelectionExtents, true);
-		this->CurrentPawn->KeyboardF(SelectionOrigin);
-	}
+	this->CurrentPawn->KeyboardF();
 }
 
 void AEmulatorPlayerController::HandleKeyboardE()
 {
-	if (this->CurrentPawn->CurrentlyHoldingObject())
-	{
-		this->CurrentPawn->ReleasePhysicsObject();
-		return;
-	}
-
-	if (this->CurrentInteractionMode != FInteractionMode::InteractMode)
-	{
-		return;
-	}
-
-	FHitResult HitResult;
-	this->GetHitResultUnderCursor(ECollisionChannel::ECC_PhysicsBody, false, HitResult);
-	AActor* HitActor = HitResult.GetActor();
-
-	if (IsValid(HitActor) && HitActor->ActorHasTag(FName(TEXT("Item"))))
-	{
-		this->CurrentPawn->KeyboardE(HitResult);
-	}
+	this->CurrentPawn->KeyboardE();
 }
 
 void AEmulatorPlayerController::HandleKeyboardEND()
 {
-	this->CurrentPawn->KeyboardEND(this->FloorZ + FloorZOffset);
+	this->CurrentPawn->KeyboardEND();
 }
 
 void AEmulatorPlayerController::HandleMiddleMouseButtonPressed()
