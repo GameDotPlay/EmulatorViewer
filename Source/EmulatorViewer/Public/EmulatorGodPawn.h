@@ -19,29 +19,17 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void MiddleMousePressed() override;
+	void KeyboardF() override;
 
-	virtual void MiddleMouseReleased() override;
+	void KeyboardE() override;
 
-	virtual void KeyboardF(FVector Location) override;
+	void KeyboardEND() override;
 
-	virtual void KeyboardE(FHitResult HitResult) override;
+	void MouseWheelAxis(float Value) override;
 
-	virtual void KeyboardEND(float NewZ) override;
+	bool CurrentlyHoldingObject() override;
 
-	virtual void MoveForward(float Value) override;
-
-	virtual void MoveRight(float Value) override;
-
-	virtual void MouseXAxis(float Value) override;
-
-	virtual void MouseYAxis(float Value) override;
-
-	virtual void MouseWheelAxis(float Value) override;
-
-	virtual bool CurrentlyHoldingObject() override;
-
-	virtual void ReleasePhysicsObject() override;
+	void ReleasePhysicsObject() override;
 
 protected:
 
@@ -62,11 +50,9 @@ private:
 
 	float DistanceAdjustSensitivity = 1000.f;
 
-	void FocusView(FVector Location);
+	void FocusView();
 
 	void Zoom(float Value);
-
-	void MouseEdgeScroll();
 
 	void PhysicsObjectDistanceAdjust(float Value);
 
