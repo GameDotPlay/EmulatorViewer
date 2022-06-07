@@ -25,9 +25,32 @@ public:
 
 	virtual UCameraComponent* GetCamera() override { return this->Camera; }
 
+	virtual void MiddleMousePressed() override;
+
+	virtual void MiddleMouseReleased() override;
+
+	virtual void MoveForward(float Value) override;
+
+	virtual void MoveRight(float Value) override;
+
+	virtual void MouseXAxis(float Value) override;
+
+	virtual void MouseYAxis(float Value) override;
+
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
+
+	virtual void MouseEdgeScroll();
+
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* LookTarget = nullptr;
+
+	UPROPERTY(VisibleAnywhere)
+	class USpringArmComponent* SpringArm = nullptr;
+
+	UPROPERTY(VisibleAnywhere)
+	class UCameraComponent* Camera = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	int32 ScreenEdgeBuffer = 10.f;
@@ -65,21 +88,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	bool bMouseEdgeScrollEnabled = true;
 
-	UPROPERTY(VisibleAnywhere)
-	class USphereComponent* LookTarget = nullptr;
-
-	UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent* SpringArm = nullptr;
-
-	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* Camera = nullptr;
-
-	bool bMiddleMouseDown = false;
-
-	APlayerController* PlayerController;
+	AEmulatorPlayerController* PlayerController;
 
 	FVector2D MousePosition;
 
 	FViewportSize CurrentViewportSize;
 
+	bool bMiddleMouseDown = false;
+
+	float FloorZ = 0.f;
+
+	float FloorZOffset = 50.f;
 };
