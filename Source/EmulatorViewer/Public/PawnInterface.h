@@ -28,11 +28,11 @@ public:
 
 	virtual void MiddleMouseReleased() { return; }
 
-	virtual void KeyboardF(FVector Location) { return; }
+	virtual void KeyboardF() { return; }
 
-	virtual void KeyboardE(FHitResult HitResult) { return; }
+	virtual void KeyboardE() { return; }
 
-	virtual void KeyboardEND(float NewZ) { return; }
+	virtual void KeyboardEND() { return; }
 
 	virtual void MoveForward(float Value) { return; }
 
