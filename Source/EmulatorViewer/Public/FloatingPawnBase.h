@@ -5,6 +5,8 @@
 #include "PawnInterface.h"
 #include "FloatingPawnBase.generated.h"
 
+class AEmulatorPlayerController;
+
 struct FViewportSize {
 
 	int32 X;
