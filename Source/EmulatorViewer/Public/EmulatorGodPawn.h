@@ -9,7 +9,7 @@
 #include "EmulatorGodPawn.generated.h"
 
 UCLASS()
-class EMULATORVIEWER_API AEmulatorGodPawn : public APawn, public AFloatingPawnBase, public IPawnInterface
+class EMULATORVIEWER_API AEmulatorGodPawn : public AFloatingPawnBase
 {
 	GENERATED_BODY()
 
@@ -28,8 +28,6 @@ public:
 	void MouseWheelAxis(float Value) override;
 
 	bool CurrentlyHoldingObject() override;
-
-	void ReleasePhysicsObject() override;
 
 protected:
 
@@ -57,4 +55,6 @@ private:
 	void PhysicsObjectDistanceAdjust(float Value);
 
 	void GrabPhysicsObject(FHitResult HitResult);
+
+	void ReleasePhysicsObject();
 };
