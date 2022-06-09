@@ -28,6 +28,16 @@ public:
 
 	virtual void MiddleMouseReleased() { return; }
 
+	virtual void LeftMouseButton() { return; }
+
+	virtual void RightMouseButton() { return; }
+
+	virtual void MouseXAxis(float Value) { return; }
+
+	virtual void MouseYAxis(float Value) { return; }
+
+	virtual void MouseWheelAxis(float Value) { return; }
+
 	virtual void KeyboardF() { return; }
 
 	virtual void KeyboardE() { return; }
@@ -38,15 +48,7 @@ public:
 
 	virtual void MoveRight(float Value) { return; }
 
-	virtual void MouseXAxis(float Value) { return; }
-
-	virtual void MouseYAxis(float Value) { return; }
-
-	virtual void MouseWheelAxis(float Value) { return; }
-
 	virtual bool CurrentlyHoldingObject() { return false; }
-
-	virtual void ReleasePhysicsObject() { return; }
 
 	virtual UCameraComponent* GetCamera() { return nullptr; }
 };
