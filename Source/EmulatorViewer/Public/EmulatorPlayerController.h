@@ -8,6 +8,7 @@ class AEmulatorViewerHUD;
 class AEmulatorGodPawn;
 class UInteractableHighlighting;
 class UUserWidget;
+class IPawnInterface;
 
 UENUM()
 enum class FControlMode
