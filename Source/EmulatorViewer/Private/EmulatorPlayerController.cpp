@@ -154,6 +154,7 @@ void AEmulatorPlayerController::SetupInputComponent()
 
 	this->InputComponent->BindAxis("ForwardAxis", this, &AEmulatorPlayerController::HandleForwardAxis);
 	this->InputComponent->BindAxis("RightAxis", this, &AEmulatorPlayerController::HandleRightAxis);
+	this->InputComponent->BindAxis("UpAxis", this, &AEmulatorPlayerController::HandleUpAxis);
 
 	this->InputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleMiddleMouseButtonPressed);
 	this->InputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Released, this, &AEmulatorPlayerController::HandleMiddleMouseButtonReleased);
@@ -318,11 +319,6 @@ void AEmulatorPlayerController::HandleKeyboardE()
 	this->CurrentPawn->KeyboardE();
 }
 
-void AEmulatorPlayerController::HandleKeyboardQ()
-{
-	this->CurrentPawn->KeyboardQ();
-}
-
 void AEmulatorPlayerController::HandleKeyboardEND()
 {
 	this->CurrentPawn->KeyboardEND();
@@ -330,7 +326,7 @@ void AEmulatorPlayerController::HandleKeyboardEND()
 
 void AEmulatorPlayerController::HandleKeyboardESC()
 {
-	this->MainHUD->TogglePause();
+	this->CurrentPawn->KeyboardESC();
 }
 
 void AEmulatorPlayerController::HandleMiddleMouseButtonPressed()
@@ -376,4 +372,9 @@ void AEmulatorPlayerController::HandleForwardAxis(float Value)
 void AEmulatorPlayerController::HandleRightAxis(float Value)
 {
 	this->CurrentPawn->MoveRight(Value);
+}
+
+void AEmulatorPlayerController::HandleUpAxis(float Value)
+{
+	this->CurrentPawn->MoveUp(Value);
 }

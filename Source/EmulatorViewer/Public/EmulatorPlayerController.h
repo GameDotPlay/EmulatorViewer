@@ -118,8 +118,6 @@ private:
 
 	void HandleKeyboardE();
 
-	void HandleKeyboardQ();
-
 	void HandleMiddleMouseButtonPressed();
 
 	void HandleMiddleMouseButtonReleased();
@@ -137,6 +135,8 @@ private:
 	void HandleForwardAxis(float Value);
 
 	void HandleRightAxis(float Value);
+
+	void HandleUpAxis(float Value);
 
 #pragma endregion
 };
