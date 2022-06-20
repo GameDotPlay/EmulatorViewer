@@ -102,6 +102,11 @@ void AEmulatorGodPawn::KeyboardEND()
 	Super::SetActorLocation(FVector(Super::GetActorLocation().X, Super::GetActorLocation().Y, this->FloorZ + this->FloorZOffset));
 }
 
+void AEmulatorGodPawn::KeyboardESC()
+{
+
+}
+
 void AEmulatorGodPawn::MouseWheelAxis(float Value)
 {
 	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))

@@ -25,6 +25,8 @@ public:
 
 	void KeyboardEND() override;
 
+	void KeyboardESC() override;
+
 	void MouseWheelAxis(float Value) override;
 
 	bool CurrentlyHoldingObject() override;
