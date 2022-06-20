@@ -35,8 +35,6 @@ public:
 
 	virtual void MoveRight(float Value) override;
 
-	virtual void MoveDown(float Value) override;
-
 	virtual void MoveUp(float Value) override;
 
 	virtual void MouseXAxis(float Value) override;
