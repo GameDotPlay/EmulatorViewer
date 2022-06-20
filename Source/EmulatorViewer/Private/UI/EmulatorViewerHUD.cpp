@@ -16,7 +16,8 @@ void AEmulatorViewerHUD::TogglePause()
 
 void AEmulatorViewerHUD::ShowInteractionModeLabel()
 {
-	this->InteractionModeLabelWidget = Cast<UInteractionModeLabelWidget>(CreateWidget(this->PlayerOwner->GetClass(), this->InteractionModeLabelClass, FName(TEXT("InteractionModeLabelWidget"))));
+	APlayerController* PC = this->PlayerOwner;
+	this->InteractionModeLabelWidget = Cast<UInteractionModeLabelWidget>(CreateWidget(PC, this->InteractionModeLabelClass, FName(TEXT("InteractionModeLabelWidget"))));
 	if (IsValid(this->InteractionModeLabelWidget))
 	{
 		this->InteractionModeLabelWidget->AddToViewport();
@@ -33,7 +34,8 @@ void AEmulatorViewerHUD::HideInteractionModeLabel()
 
 void AEmulatorViewerHUD::ShowBuildModeUI()
 {
-	this->BuildModeUIWidget = Cast<UBuildModeUIWidget>(CreateWidget(this->PlayerOwner->GetClass(), this->BuildModeUIClass, FName(TEXT("BuildModeUI"))));
+	APlayerController* PC = this->PlayerOwner;
+	this->BuildModeUIWidget = Cast<UBuildModeUIWidget>(CreateWidget(PC, this->BuildModeUIClass, FName(TEXT("BuildModeUI"))));
 	if (IsValid(this->BuildModeUIWidget))
 	{
 		this->BuildModeUIWidget->AddToViewport();
@@ -72,7 +74,8 @@ void AEmulatorViewerHUD::AddDetailsPopup(UDetailsPopupWidget* DetailsPopup)
 
 void AEmulatorViewerHUD::InitializePopupsCanvas()
 {
-	this->PopupsCanvas = Cast<UPopupContainerWidget>(CreateWidget(this->PlayerOwner->GetClass(), this->PopupsCanvasClass));
+	APlayerController* PC = this->PlayerOwner;
+	this->PopupsCanvas = Cast<UPopupContainerWidget>(CreateWidget(PC, this->PopupsCanvasClass));
 	this->PopupsCanvas->AddToViewport();
 }
 
