@@ -46,6 +46,8 @@ public:
 
 	virtual void KeyboardEND() { return; }
 
+	virtual void KeyboardESC() { return; }
+
 	virtual void MoveForward(float Value) { return; }
 
 	virtual void MoveRight(float Value) { return; }
