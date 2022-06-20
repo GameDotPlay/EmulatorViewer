@@ -114,7 +114,11 @@ private:
 
 	void HandleKeyboardEND();
 
+	void HandleKeyboardESC();
+
 	void HandleKeyboardE();
+
+	void HandleKeyboardQ();
 
 	void HandleMiddleMouseButtonPressed();
 

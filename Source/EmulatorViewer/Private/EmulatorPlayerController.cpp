@@ -149,7 +149,11 @@ void AEmulatorPlayerController::SetupInputComponent()
 	this->InputComponent->BindAction("Keyboard3", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboard3);
 	this->InputComponent->BindAction("KeyboardF", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardF);
 	this->InputComponent->BindAction("KeyboardEND", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardEND);
+	this->InputComponent->BindAction("KeyboardESC", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardESC);
 	this->InputComponent->BindAction("KeyboardE", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardE);
+
+	this->InputComponent->BindAxis("ForwardAxis", this, &AEmulatorPlayerController::HandleForwardAxis);
+	this->InputComponent->BindAxis("RightAxis", this, &AEmulatorPlayerController::HandleRightAxis);
 
 	this->InputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleMiddleMouseButtonPressed);
 	this->InputComponent->BindAction("MiddleMouseButton", EInputEvent::IE_Released, this, &AEmulatorPlayerController::HandleMiddleMouseButtonReleased);
@@ -159,8 +163,6 @@ void AEmulatorPlayerController::SetupInputComponent()
 	this->InputComponent->BindAxis("MouseWheel", this, &AEmulatorPlayerController::HandleMouseWheel);
 	this->InputComponent->BindAxis("MouseX", this, &AEmulatorPlayerController::HandleMouseXAxis);
 	this->InputComponent->BindAxis("MouseY", this, &AEmulatorPlayerController::HandleMouseYAxis);
-	this->InputComponent->BindAxis("ForwardAxis", this, &AEmulatorPlayerController::HandleForwardAxis);
-	this->InputComponent->BindAxis("RightAxis", this, &AEmulatorPlayerController::HandleRightAxis);
 }
 
 void AEmulatorPlayerController::LeftClickSelect()
@@ -316,9 +318,19 @@ void AEmulatorPlayerController::HandleKeyboardE()
 	this->CurrentPawn->KeyboardE();
 }
 
+void AEmulatorPlayerController::HandleKeyboardQ()
+{
+	this->CurrentPawn->KeyboardQ();
+}
+
 void AEmulatorPlayerController::HandleKeyboardEND()
 {
 	this->CurrentPawn->KeyboardEND();
+}
+
+void AEmulatorPlayerController::HandleKeyboardESC()
+{
+	this->MainHUD->TogglePause();
 }
 
 void AEmulatorPlayerController::HandleMiddleMouseButtonPressed()
