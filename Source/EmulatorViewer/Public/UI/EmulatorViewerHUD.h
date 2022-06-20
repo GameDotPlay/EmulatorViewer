@@ -24,7 +24,9 @@ class EMULATORVIEWER_API AEmulatorViewerHUD : public AHUD
 
 public:
 
-	void TogglePause();
+	void ShowPauseMenu();
+
+	void HidePauseMenu();
 
 	void ShowInteractionModeLabel();
 

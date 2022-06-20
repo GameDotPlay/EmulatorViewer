@@ -9,9 +9,22 @@
 #include "UI/InteractionModeLabelWidget.h"
 #include "UI/BuildModeUIWidget.h"
 
-void AEmulatorViewerHUD::TogglePause()
+void AEmulatorViewerHUD::ShowPauseMenu()
 {
+	APlayerController* PC = this->PlayerOwner;
+	this->PauseMenu = CreateWidget(PC, this->PauseMenuClass, FName(TEXT("PauseMenuWidget")));
+	if (IsValid(this->PauseMenu))
+	{
+		this->PauseMenu->AddToViewport();
+	}
+}
 
+void AEmulatorViewerHUD::HidePauseMenu()
+{
+	if (IsValid(this->PauseMenu))
+	{
+		this->PauseMenu->RemoveFromParent();
+	}
 }
 
 void AEmulatorViewerHUD::ShowInteractionModeLabel()
