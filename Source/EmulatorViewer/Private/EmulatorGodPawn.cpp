@@ -43,30 +43,6 @@ void AEmulatorGodPawn::KeyboardF()
 	this->FocusView();
 }
 
-void AEmulatorGodPawn::KeyboardE()
-{
-	// If already holding something, release it.
-	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
-	{
-		this->ReleasePhysicsObject();
-		return;
-	}
-
-	// If not already holding something, get hit result under cursor and grab it.
-	FHitResult HitResult;
-	this->PlayerController->GetHitResultUnderCursor(ECC_PhysicsBody, false, HitResult);
-	AActor* HitActor = HitResult.GetActor();
-
-	if (IsValid(HitActor) && HitActor->ActorHasTag(FName(TEXT("Item"))))
-	{
-		if (IsValid(this->PhysicsHandle) && !IsValid(this->PhysicsHandle->GrabbedComponent))
-		{
-			this->GrabPhysicsObject(HitResult);
-			return;
-		}
-	}
-}
-
 void AEmulatorGodPawn::GrabPhysicsObject(FHitResult HitResult)
 {
 	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
@@ -104,7 +80,33 @@ void AEmulatorGodPawn::KeyboardEND()
 
 void AEmulatorGodPawn::KeyboardESC()
 {
+	this->PlayerController->TogglePause();
+}
 
+void AEmulatorGodPawn::KeyboardSPACE()
+{
+	UE_LOG(LogTemp, Warning, TEXT("In GodPawn::KeyboardSPACE()"));
+
+	// If already holding something, release it.
+	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
+	{
+		this->ReleasePhysicsObject();
+		return;
+	}
+
+	// If not already holding something, get hit result under cursor and grab it.
+	FHitResult HitResult;
+	this->PlayerController->GetHitResultUnderCursor(ECC_PhysicsBody, false, HitResult);
+	AActor* HitActor = HitResult.GetActor();
+
+	if (IsValid(HitActor) && HitActor->ActorHasTag(FName(TEXT("Item"))))
+	{
+		if (IsValid(this->PhysicsHandle) && !IsValid(this->PhysicsHandle->GrabbedComponent))
+		{
+			this->GrabPhysicsObject(HitResult);
+			return;
+		}
+	}
 }
 
 void AEmulatorGodPawn::MouseWheelAxis(float Value)

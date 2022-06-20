@@ -21,11 +21,11 @@ public:
 
 	void KeyboardF() override;
 
-	void KeyboardE() override;
-
 	void KeyboardEND() override;
 
 	void KeyboardESC() override;
+
+	void KeyboardSPACE() override;
 
 	void MouseWheelAxis(float Value) override;
 
