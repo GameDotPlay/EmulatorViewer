@@ -36,6 +36,11 @@ void AFloatingPawnBase::BeginPlay()
 	UGameplayStatics::GetAllActorsWithTag(this, FName(TEXT("Floor")), Actors);
 	check(Actors.Num() > 0);
 	this->FloorZ = Actors[0]->GetActorLocation().Z;
+
+	Actors.Empty();
+	UGameplayStatics::GetAllActorsWithTag(this, FName(TEXT("Ceiling")), Actors);
+	check(Actors.Num() > 0);
+	this->CeilingZ = Actors[0]->GetActorLocation().Z;
 }
 
 void AFloatingPawnBase::Tick(float DeltaTime)
@@ -94,17 +99,11 @@ void AFloatingPawnBase::MoveRight(float Value)
 
 void AFloatingPawnBase::MoveUp(float Value)
 {
-	float PreviousX = GetActorLocation().X;
-	float PreviousY = GetActorLocation().Y;
+	FVector PreviousLocation = GetActorLocation();
 	float DeltaSeconds = GetWorld()->GetDeltaSeconds();
 	FVector DeltaLocation = FVector(GetActorUpVector() * Value * this->MouseEdgeScrollSpeed * DeltaSeconds);
 	AddActorWorldOffset(DeltaLocation);
-	SetActorLocation(FVector(PreviousX, PreviousY, GetActorLocation().Z));
-
-	if (GetActorLocation().Z < this->FloorZ + this->FloorZOffset)
-	{
-		SetActorLocation(FVector(PreviousX, PreviousY, this->FloorZ + this->FloorZOffset));
-	}
+	SetActorLocation(FVector(PreviousLocation.X, PreviousLocation.Y, GetActorLocation().Z));
 }
 
 void AFloatingPawnBase::MiddleMousePressed()

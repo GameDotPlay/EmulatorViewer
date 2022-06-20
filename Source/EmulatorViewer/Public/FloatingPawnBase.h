@@ -103,4 +103,8 @@ protected:
 	float FloorZ = 0.f;
 
 	float FloorZOffset = 50.f;
+
+	float CeilingZ = 0.f;
+
+	float CeilingZOffset = 50.f;
 };
