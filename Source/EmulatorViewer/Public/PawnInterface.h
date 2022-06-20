@@ -42,11 +42,11 @@ public:
 
 	virtual void KeyboardE() { return; }
 
-	virtual void KeyboardQ() { return; }
-
 	virtual void KeyboardEND() { return; }
 
 	virtual void KeyboardESC() { return; }
+
+	virtual void KeyboardSPACE() { return; }
 
 	virtual void MoveForward(float Value) { return; }
 
