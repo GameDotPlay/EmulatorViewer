@@ -44,6 +44,8 @@ public:
 
 	AActor* GetCurrentSelection() { return this->CurrentSelection; }
 
+	void TogglePause();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -69,6 +71,8 @@ private:
 	FInteractionMode CurrentInteractionMode;
 
 	FBuildModeState CurrentBuildModeState;
+
+	FInteractionMode LastInteractionMode;
 
 	virtual void SetupInputComponent() override;
 
@@ -117,6 +121,8 @@ private:
 	void HandleKeyboardESC();
 
 	void HandleKeyboardE();
+
+	void HandleKeyboardSPACE();
 
 	void HandleMiddleMouseButtonPressed();
 

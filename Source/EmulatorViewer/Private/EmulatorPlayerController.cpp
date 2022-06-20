@@ -10,6 +10,23 @@
 #include "DynamicStraightConveyor.h"
 #include "Camera/CameraComponent.h"
 
+void AEmulatorPlayerController::TogglePause()
+{
+	if (GetWorld()->IsPaused())
+	{
+		this->SetPause(false);
+		this->ChangeInteractionMode(this->LastInteractionMode);
+		this->MainHUD->HidePauseMenu();
+	}
+	else
+	{
+		this->SetPause(true);
+		this->LastInteractionMode = this->CurrentInteractionMode;
+		this->ChangeInteractionMode(FInteractionMode::FullMenuMode);
+		this->MainHUD->ShowPauseMenu();
+	}
+}
+
 void AEmulatorPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -27,8 +44,6 @@ void AEmulatorPlayerController::BeginPlay()
 void AEmulatorPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
-
 }
 
 void AEmulatorPlayerController::ToggleControlMode()
@@ -133,10 +148,9 @@ void AEmulatorPlayerController::SetBuildInteractionMode()
 
 FInputModeGameAndUI AEmulatorPlayerController::GetDefaultInputMode()
 {
-	FInputModeGameAndUI InputMode;
-	InputMode.SetHideCursorDuringCapture(false);
+	FInputModeGameAndUI InputMode = FInputModeGameAndUI();
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
-
+	
 	return InputMode;
 }
 
@@ -149,8 +163,9 @@ void AEmulatorPlayerController::SetupInputComponent()
 	this->InputComponent->BindAction("Keyboard3", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboard3);
 	this->InputComponent->BindAction("KeyboardF", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardF);
 	this->InputComponent->BindAction("KeyboardEND", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardEND);
-	this->InputComponent->BindAction("KeyboardESC", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardESC);
+	this->InputComponent->BindAction("KeyboardESC", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardESC).bExecuteWhenPaused = true;
 	this->InputComponent->BindAction("KeyboardE", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardE);
+	this->InputComponent->BindAction("KeyboardSPACE", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardSPACE);
 
 	this->InputComponent->BindAxis("ForwardAxis", this, &AEmulatorPlayerController::HandleForwardAxis);
 	this->InputComponent->BindAxis("RightAxis", this, &AEmulatorPlayerController::HandleRightAxis);
@@ -317,6 +332,11 @@ void AEmulatorPlayerController::HandleKeyboardF()
 void AEmulatorPlayerController::HandleKeyboardE()
 {
 	this->CurrentPawn->KeyboardE();
+}
+
+void AEmulatorPlayerController::HandleKeyboardSPACE()
+{
+	this->CurrentPawn->KeyboardSPACE();
 }
 
 void AEmulatorPlayerController::HandleKeyboardEND()
