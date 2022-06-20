@@ -42,11 +42,17 @@ public:
 
 	virtual void KeyboardE() { return; }
 
+	virtual void KeyboardQ() { return; }
+
 	virtual void KeyboardEND() { return; }
 
 	virtual void MoveForward(float Value) { return; }
 
 	virtual void MoveRight(float Value) { return; }
+
+	virtual void MoveUp(float Value) { return; }
+
+	virtual void MoveDown(float Value) { return; }
 
 	virtual bool CurrentlyHoldingObject() { return false; }
 
