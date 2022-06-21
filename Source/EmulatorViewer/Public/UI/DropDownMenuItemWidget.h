@@ -2,12 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ComboBoxString.h"
 #include "DropDownMenuItemWidget.generated.h"
 
 class UTextBlock;
-class UComboBoxKey;
 class UHorizontalBox;
-class UComboBox;
 
 /**
  * 
@@ -19,24 +18,30 @@ class EMULATORVIEWER_API UDropDownMenuItemWidget : public UUserWidget
 
 public:
 
-	UComboBoxKey* GetComboBox() { return this->DropDown; }
+	UComboBoxString* GetComboBox() const { return this->DropDown; }
 
-	UHorizontalBox* GetHorizontalBox() { return this->HorizontalBox; }
+	UHorizontalBox* GetHorizontalBox() const { return this->HorizontalBox; }
 
-	void SetDescription(FText DescriptionText);
+	void SetDropDownSelection(int32 Value) { this->DropDown->SetSelectedIndex(Value); }
 
-	void SetToolTip(FText InToolTipText);
+	int32 GetDropDownSelection() const { return this->DropDown->GetSelectedIndex(); }
+
+	void SetDescription(const FText& DescriptionText);
+
+	void SetToolTip(const FText& InToolTipText);
+
+	void SetDropDownOptions(const TArray<FString>& Options);
 
 protected:
 
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* HorizontalBox;
+	UHorizontalBox* HorizontalBox = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Description;
+	UTextBlock* Description = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UComboBoxKey* DropDown;
+	UComboBoxString* DropDown = nullptr;
 };
