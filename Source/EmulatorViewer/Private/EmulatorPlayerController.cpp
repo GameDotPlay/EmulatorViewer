@@ -166,6 +166,7 @@ void AEmulatorPlayerController::SetupInputComponent()
 	this->InputComponent->BindAction("KeyboardESC", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardESC).bExecuteWhenPaused = true;
 	this->InputComponent->BindAction("KeyboardE", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardE);
 	this->InputComponent->BindAction("KeyboardSPACE", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardSPACE);
+	this->InputComponent->BindAction("KeyboardP", EInputEvent::IE_Pressed, this, &AEmulatorPlayerController::HandleKeyboardESC);
 
 	this->InputComponent->BindAxis("ForwardAxis", this, &AEmulatorPlayerController::HandleForwardAxis);
 	this->InputComponent->BindAxis("RightAxis", this, &AEmulatorPlayerController::HandleRightAxis);
