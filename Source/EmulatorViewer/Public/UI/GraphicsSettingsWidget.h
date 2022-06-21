@@ -10,9 +10,10 @@ class UCanvasPanel;
 class UBackgroundBlur;
 class UVerticalBox;
 class UDropDownMenuItemWidget;
+class UIntegerMenuItemWidget;
 
 UENUM()
-enum class FDropDownValues
+enum class EDropDownValues : int32
 {
 	Low = 0,
 	Medium = 1,
@@ -36,42 +37,75 @@ protected:
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* BaseCanvas;
+	UCanvasPanel* BaseCanvas = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UBackgroundBlur* BackgroundBlur;
+	UBackgroundBlur* BackgroundBlur = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* VerticalBox;
+	UVerticalBox* VerticalBox = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* ViewDistanceQualityDropDown;
+	UIntegerMenuItemWidget* ResolutionScale = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	UDropDownMenuItemWidget* ViewDistanceQualityDropDown = nullptr;
 	
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* TextureQualityDropDown;
+	UDropDownMenuItemWidget* TextureQualityDropDown = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* ShadowQualityDropDown;
+	UDropDownMenuItemWidget* ShadowQualityDropDown = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* ShadingQualityDropDown;
+	UDropDownMenuItemWidget* ShadingQualityDropDown = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* ReflectionQualityDropDown;
+	UDropDownMenuItemWidget* ReflectionQualityDropDown = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* PostProcessQualityDropDown;
+	UDropDownMenuItemWidget* PostProcessQualityDropDown = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* GlobalIlluminationQualityDropDown;
+	UDropDownMenuItemWidget* GlobalIlluminationQualityDropDown = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* EffectsQualityDropDown;
+	UDropDownMenuItemWidget* EffectsQualityDropDown = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UDropDownMenuItemWidget* AntiAliasingQualityDropDown;
+	UDropDownMenuItemWidget* AntiAliasingQualityDropDown = nullptr;
 
-	void SetViewDistanceQuality(FName SelectedItem, ESelectInfo::Type SelectionType);
+	UFUNCTION()
+	void SetResolutionQuality(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void SetViewDistanceQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+	void SetTextureQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+	void SetShadowQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+	void SetShadingQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+	void SetReflectionQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+	void SetPostProcessQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+	void SetGlobalIlluminationQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+	void SetEffectsQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
+
+	UFUNCTION()
+	void SetAntiAliasingQuality(FString SelectedItem, ESelectInfo::Type SelectionType);
 
 	void InitializeDropDowns();
+
+	UGameUserSettings* UserSettings = nullptr;
 };
