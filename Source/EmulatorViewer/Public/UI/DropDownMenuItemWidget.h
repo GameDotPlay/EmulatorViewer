@@ -22,7 +22,7 @@ public:
 
 	UHorizontalBox* GetHorizontalBox() const { return this->HorizontalBox; }
 
-	void SetDropDownSelection(int32 Value) { this->DropDown->SetSelectedIndex(Value); }
+	void SetDropDownSelection(int32 Value, const FString& OptionText);
 
 	int32 GetDropDownSelection() const { return this->DropDown->GetSelectedIndex(); }
 

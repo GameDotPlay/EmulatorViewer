@@ -2,6 +2,12 @@
 #include "UI/DropDownMenuItemWidget.h"
 #include "Components/TextBlock.h"
 
+void UDropDownMenuItemWidget::SetDropDownSelection(int32 Value, const FString& OptionText)
+{
+	this->DropDown->SetSelectedIndex(Value);
+	this->DropDown->SetSelectedOption(OptionText);
+}
+
 void UDropDownMenuItemWidget::SetDescription(const FText& DescriptionText)
 {
 	if (!DescriptionText.IsEmptyOrWhitespace() && !DescriptionText.IsNumeric())
