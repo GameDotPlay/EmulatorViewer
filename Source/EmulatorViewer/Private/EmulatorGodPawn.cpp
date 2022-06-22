@@ -85,8 +85,6 @@ void AEmulatorGodPawn::KeyboardESC()
 
 void AEmulatorGodPawn::KeyboardSPACE()
 {
-	UE_LOG(LogTemp, Warning, TEXT("In GodPawn::KeyboardSPACE()"));
-
 	// If already holding something, release it.
 	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
 	{
