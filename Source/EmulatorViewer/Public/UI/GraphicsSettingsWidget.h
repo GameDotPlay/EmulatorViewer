@@ -37,16 +37,13 @@ protected:
 private:
 
 	UPROPERTY(meta = (BindWidget))
-	UCanvasPanel* BaseCanvas = nullptr;
-
-	UPROPERTY(meta = (BindWidget))
-	UBackgroundBlur* BackgroundBlur = nullptr;
-
-	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* VerticalBox = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
 	UIntegerMenuItemWidget* ResolutionScale = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	UDropDownMenuItemWidget* WindowModeDropDown = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
 	UDropDownMenuItemWidget* ViewDistanceQualityDropDown = nullptr;
@@ -77,6 +74,9 @@ private:
 
 	UFUNCTION()
 	void SetResolutionQuality(const FText& Text, ETextCommit::Type CommitMethod);
+
+	UFUNCTION()
+	void SetWindowMode(FString SelectedItem, ESelectInfo::Type SelectionType);
 
 	UFUNCTION()
 	void SetViewDistanceQuality(FString SelectedItem, ESelectInfo::Type SelectionType);

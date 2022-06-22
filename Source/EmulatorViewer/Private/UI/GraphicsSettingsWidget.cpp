@@ -16,6 +16,7 @@ void UGraphicsSettingsWidget::NativeConstruct()
 
 	this->InitializeDropDowns();
 	this->ResolutionScale->GetTextBox()->OnTextCommitted.AddUniqueDynamic(this, &UGraphicsSettingsWidget::SetResolutionQuality);
+	this->WindowModeDropDown->GetComboBox()->OnSelectionChanged.AddUniqueDynamic(this, &UGraphicsSettingsWidget::SetWindowMode);
 	this->ViewDistanceQualityDropDown->GetComboBox()->OnSelectionChanged.AddUniqueDynamic(this, &UGraphicsSettingsWidget::SetViewDistanceQuality);
 	this->TextureQualityDropDown->GetComboBox()->OnSelectionChanged.AddUniqueDynamic(this, &UGraphicsSettingsWidget::SetTextureQuality);
 	this->ShadowQualityDropDown->GetComboBox()->OnSelectionChanged.AddUniqueDynamic(this, &UGraphicsSettingsWidget::SetShadowQuality);
@@ -34,6 +35,35 @@ void UGraphicsSettingsWidget::SetResolutionQuality(const FText& Text, ETextCommi
 	if (IsValid(this->UserSettings))
 	{
 		this->UserSettings->SetResolutionScaleValueEx((float)Value);
+		this->UserSettings->ApplySettings(false);
+		this->UserSettings->SaveSettings();
+	}
+}
+
+void UGraphicsSettingsWidget::SetWindowMode(FString SelectedItem, ESelectInfo::Type SelectionType)
+{
+	int32 Value = this->WindowModeDropDown->GetDropDownSelection();
+
+	if (IsValid(this->UserSettings))
+	{
+		switch (Value)
+		{
+		case 0:
+			this->UserSettings->SetFullscreenMode(EWindowMode::Windowed);
+			break;
+
+		case 1:
+			this->UserSettings->SetFullscreenMode(EWindowMode::WindowedFullscreen);
+			break;
+
+		case 2:
+			this->UserSettings->SetFullscreenMode(EWindowMode::Fullscreen);
+			break;
+
+		default:
+			break;
+		}
+		
 		this->UserSettings->ApplySettings(false);
 		this->UserSettings->SaveSettings();
 	}
@@ -149,7 +179,8 @@ void UGraphicsSettingsWidget::SetAntiAliasingQuality(FString SelectedItem, ESele
 
 void UGraphicsSettingsWidget::InitializeDropDowns()
 {
-	TArray<FString> DefaultOptions = { "Low", "Medium", "High" };
+	TArray<FString> DefaultOptions = { "Low", "Medium", "High", "Epic"};
+	TArray<FString> WindowOptions = { "Windowed", "Windowed Fullscreen", "Fullscreen" };
 
 	this->ResolutionScale->SetDescription(FText::FromString(TEXT("Resolution Scale")));
 	this->ResolutionScale->SetToolTip(FText::FromString(TEXT("A percent (0-100) that scales the resolution. Lower value gives better performance but at a severe visual quality loss.")));
@@ -163,12 +194,39 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 		this->ResolutionScale->SetValue(FMath::RoundToInt32(CurrentScaleValue));
 	}
 
+	this->WindowModeDropDown->SetDescription(FText::FromString(TEXT("Window Mode")));
+	this->WindowModeDropDown->SetToolTip(FText::FromString(TEXT("The window mode of the application.")));
+	this->WindowModeDropDown->SetDropDownOptions(WindowOptions);
+	if (IsValid(this->UserSettings))
+	{
+		EWindowMode::Type WindowMode = this->UserSettings->GetFullscreenMode();
+		switch (WindowMode)
+		{
+		case EWindowMode::Windowed:
+			this->WindowModeDropDown->SetDropDownSelection(0, WindowOptions[0]);
+			break;
+
+		case EWindowMode::WindowedFullscreen:
+			this->WindowModeDropDown->SetDropDownSelection(1, WindowOptions[1]);
+			break;
+
+		case EWindowMode::Fullscreen:
+			this->WindowModeDropDown->SetDropDownSelection(2, WindowOptions[2]);
+			break;
+
+		default:
+			this->WindowModeDropDown->SetDropDownSelection(0, WindowOptions[0]);
+			break;
+		}
+	}
+
 	this->ViewDistanceQualityDropDown->SetDescription(FText::FromString(TEXT("View Distance Quality")));
 	this->ViewDistanceQualityDropDown->SetToolTip(FText::FromString(TEXT("Lower values give shorter view distances. Negligable effect on performance on indoor environments.")));
 	this->ViewDistanceQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->ViewDistanceQualityDropDown->SetDropDownSelection(this->UserSettings->GetViewDistanceQuality());
+		int32 Quality = this->UserSettings->GetViewDistanceQuality();
+		this->ViewDistanceQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
 	}
 
 	this->TextureQualityDropDown->SetDescription(FText::FromString(TEXT("Texture Quality")));
@@ -176,7 +234,8 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 	this->TextureQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->TextureQualityDropDown->SetDropDownSelection(this->UserSettings->GetTextureQuality());
+		int32 Quality = this->UserSettings->GetTextureQuality();
+		this->TextureQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
 	}
 
 	this->ShadowQualityDropDown->SetDescription(FText::FromString(TEXT("Shadow Quality")));
@@ -184,7 +243,8 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 	this->ShadowQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->ShadowQualityDropDown->SetDropDownSelection(this->UserSettings->GetShadowQuality());
+		int32 Quality = this->UserSettings->GetShadowQuality();
+		this->ShadowQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
 	}
 
 	this->ShadingQualityDropDown->SetDescription(FText::FromString(TEXT("Shading Quality")));
@@ -192,7 +252,8 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 	this->ShadingQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->ShadingQualityDropDown->SetDropDownSelection(this->UserSettings->GetShadingQuality());
+		int32 Quality = this->UserSettings->GetShadingQuality();
+		this->ShadingQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
 	}
 
 	this->ReflectionQualityDropDown->SetDescription(FText::FromString(TEXT("Reflection Quality")));
@@ -200,7 +261,8 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 	this->ReflectionQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->ReflectionQualityDropDown->SetDropDownSelection(this->UserSettings->GetReflectionQuality());
+		int32 Quality = this->UserSettings->GetReflectionQuality();
+		this->ReflectionQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
 	}
 
 	this->PostProcessQualityDropDown->SetDescription(FText::FromString(TEXT("Post Process Quality")));
@@ -208,7 +270,8 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 	this->PostProcessQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->PostProcessQualityDropDown->SetDropDownSelection(this->UserSettings->GetPostProcessingQuality());
+		int32 Quality = this->UserSettings->GetPostProcessingQuality();
+		this->PostProcessQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
 	}
 
 	this->GlobalIlluminationQualityDropDown->SetDescription(FText::FromString(TEXT("Global Illumination Quality")));
@@ -216,7 +279,8 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 	this->GlobalIlluminationQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->GlobalIlluminationQualityDropDown->SetDropDownSelection(this->UserSettings->GetGlobalIlluminationQuality());
+		int32 Quality = this->UserSettings->GetGlobalIlluminationQuality();
+		this->GlobalIlluminationQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
 	}
 
 	this->EffectsQualityDropDown->SetDescription(FText::FromString(TEXT("Effects Quality")));
@@ -224,7 +288,8 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 	this->EffectsQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->EffectsQualityDropDown->SetDropDownSelection(this->UserSettings->GetVisualEffectQuality());
+		int32 Quality = this->UserSettings->GetVisualEffectQuality();
+		this->EffectsQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
 	}
 
 	this->AntiAliasingQualityDropDown->SetDescription(FText::FromString(TEXT("Antialiasing Quality")));
@@ -232,6 +297,13 @@ void UGraphicsSettingsWidget::InitializeDropDowns()
 	this->AntiAliasingQualityDropDown->SetDropDownOptions(DefaultOptions);
 	if (IsValid(this->UserSettings))
 	{
-		this->AntiAliasingQualityDropDown->SetDropDownSelection(this->UserSettings->GetAntiAliasingQuality());
+		int32 Quality = this->UserSettings->GetAntiAliasingQuality();
+		this->AntiAliasingQualityDropDown->SetDropDownSelection(Quality, DefaultOptions[Quality]);
+	}
+
+	if (IsValid(this->UserSettings))
+	{
+		this->UserSettings->ApplySettings(false);
+		this->UserSettings->SaveSettings();
 	}
 }
