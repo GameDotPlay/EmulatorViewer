@@ -197,11 +197,6 @@ void AEmulatorPlayerController::RightClickInteract()
 	this->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
 	AActor* HitActor = HitResult.GetActor();
 
-	if (!this->MouseSelection(HitActor))
-	{
-		return;
-	}
-
 	IPopulateDetailsInterface* ActorInterface = Cast<IPopulateDetailsInterface>(HitActor);
 	if (ActorInterface)
 	{
