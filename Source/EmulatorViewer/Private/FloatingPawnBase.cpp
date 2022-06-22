@@ -104,6 +104,16 @@ void AFloatingPawnBase::MoveUp(float Value)
 	FVector DeltaLocation = FVector(GetActorUpVector() * Value * this->MouseEdgeScrollSpeed * DeltaSeconds);
 	AddActorWorldOffset(DeltaLocation);
 	SetActorLocation(FVector(PreviousLocation.X, PreviousLocation.Y, GetActorLocation().Z));
+
+	if (GetActorLocation().Z < this->FloorZ + this->FloorZOffset)
+	{
+		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, this->FloorZ + this->FloorZOffset));
+	}
+
+	if (this->Camera->GetComponentLocation().Z > this->CeilingZ - this->CeilingZOffset)
+	{
+		SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, this->CeilingZ - this->CeilingZOffset));
+	}
 }
 
 void AFloatingPawnBase::MiddleMousePressed()
