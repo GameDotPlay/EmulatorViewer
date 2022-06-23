@@ -5,16 +5,19 @@
 #include "PopulateDetailsInterface.h"
 #include "ItemSpawner.generated.h"
 
+class UUserWidget;
+class AEmulatorViewerHUD;
+
 UCLASS()
 class EMULATORVIEWER_API AItemSpawner : public AActor, public IPopulateDetailsInterface
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	AItemSpawner();
 
-	virtual void DetailsPopupInteract(class UDetailsPopupContentWidget* ContentWidget) override;
+	virtual void DetailsPopupInteract(AEmulatorViewerHUD* MainHUD) override;
 
 	void KillAllOwnedItems();
 
@@ -35,7 +38,7 @@ public:
 	int32 GetNumberOfItemsInWorld() const { return this->OwnedItems.Num(); }
 
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
 private:
@@ -45,6 +48,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* VisibleMesh;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> DetailsPopupClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemSpawner", meta = (AllowPrivateAccess = "true"))
 	bool bEnabled = true;
