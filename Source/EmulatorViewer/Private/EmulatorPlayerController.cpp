@@ -5,7 +5,7 @@
 #include "PopulateDetailsInterface.h"
 #include "UI/DetailsPopupWidget.h"
 #include "UI/EmulatorViewerHUD.h"
-#include "UI/BuildModeUIWidget.h"
+#include "UI/BuildModeBaseUI.h"
 #include "DynamicStraightConveyor.h"
 #include "Camera/CameraComponent.h"
 #include "EmulatorGodPawn.h"
@@ -107,7 +107,6 @@ void AEmulatorPlayerController::SetFullMenuInteractionMode()
 {
 	this->SetInputMode(FInputModeUIOnly());
 	this->CurrentInteractionMode = FInteractionMode::FullMenuMode;
-	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -115,7 +114,6 @@ void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->CurrentInteractionMode = FInteractionMode::PopupMenuMode;
-	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -130,6 +128,7 @@ void AEmulatorPlayerController::SetObserveInteractionMode()
 			this->Possess(GodPawn);
 			this->CurrentPawn->DestroyPawn();
 			this->CurrentPawn = Cast<IPawnInterface>(this->GetPawn());
+			this->MainHUD->HideBuildModeUI();
 		}
 		else
 		{
@@ -140,7 +139,6 @@ void AEmulatorPlayerController::SetObserveInteractionMode()
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Observe Mode")));
 	this->CurrentInteractionMode = FInteractionMode::ObserveMode;
-	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -155,6 +153,7 @@ void AEmulatorPlayerController::SetInteractInteractionMode()
 			this->Possess(GodPawn);
 			this->CurrentPawn->DestroyPawn();
 			this->CurrentPawn = Cast<IPawnInterface>(this->GetPawn());
+			this->MainHUD->HideBuildModeUI();
 		}
 		else
 		{
@@ -165,7 +164,6 @@ void AEmulatorPlayerController::SetInteractInteractionMode()
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Interact Mode")));
 	this->CurrentInteractionMode = FInteractionMode::InteractMode;
-	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::GrabHand;
 }
 
@@ -191,9 +189,8 @@ void AEmulatorPlayerController::SetBuildInteractionMode()
 
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Build Mode")));
-	//this->MainHUD->ShowBuildModeUI();
+	this->MainHUD->ShowBuildModeUI();
 	this->CurrentInteractionMode = FInteractionMode::BuildMode;
-	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
@@ -233,83 +230,8 @@ void AEmulatorPlayerController::SetupInputComponent()
 	this->InputComponent->BindAxis("MouseY", this, &AEmulatorPlayerController::HandleMouseYAxis);
 }
 
-void AEmulatorPlayerController::LeftClickSelect()
-{
-	FHitResult HitResult;
-	this->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-	AActor* HitActor = HitResult.GetActor();
-
-	this->MouseSelection(HitActor);
-}
-
-void AEmulatorPlayerController::RightClickInteract()
-{
-	FHitResult HitResult;
-	this->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-	AActor* HitActor = HitResult.GetActor();
-
-	IPopulateDetailsInterface* ActorInterface = Cast<IPopulateDetailsInterface>(HitActor);
-	if (ActorInterface)
-	{
-		UDetailsPopupWidget* DetailsPopup = Cast<UDetailsPopupWidget>(CreateWidget(this, this->DetailsPopupClass));
-		ActorInterface->DetailsPopupInteract(DetailsPopup->GetContentWidget());
-		DetailsPopup->SetHeaderText(FText::FromString(HitActor->GetActorNameOrLabel()));
-
-		this->MainHUD->AddDetailsPopup(DetailsPopup);
-	}
-}
-
-bool AEmulatorPlayerController::MouseSelection(AActor* HitActor)
-{
-	if (!IsValid(HitActor) || this->CurrentSelection == HitActor)
-	{
-		return false;
-	}
-
-	if (IsValid(this->CurrentSelection))
-	{
-		// Turn off current selection highlighting.
-		UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(this->CurrentSelection);
-		if (IsValid(HighlightComponent))
-		{
-			HighlightComponent->SetSelectedDisabled();
-		}
-	}
-
-	UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(HitActor);
-	if (IsValid(HighlightComponent))
-	{
-		HighlightComponent->SetSelectedActive();
-		this->CurrentSelection = HitActor;
-	}
-
-	return true;
-}
-
-UInteractableHighlighting* AEmulatorPlayerController::GetHighlightingComponent(AActor* Actor)
-{
-	if (Actor == nullptr)
-	{
-		return nullptr;
-	}
-
-	UActorComponent* Component = Actor->GetComponentByClass(UInteractableHighlighting::StaticClass());
-	UInteractableHighlighting* HighlightComponent = Cast<UInteractableHighlighting>(Component);
-
-	if (HighlightComponent == nullptr)
-	{
-		return nullptr;
-	}
-	else
-	{
-		return HighlightComponent;
-	}
-}
-
 void AEmulatorPlayerController::CreateStraightConveyor()
 {
-	this->CurrentBuildModeState = FBuildModeState::Placing;
-
 	// Spawn dynamic straight conveyor.
 	FActorSpawnParameters SpawnParameters;
 	FTransform Transform = FTransform::Identity;
@@ -408,12 +330,12 @@ void AEmulatorPlayerController::HandleMiddleMouseButtonReleased()
 
 void AEmulatorPlayerController::HandleLeftMouseButton()
 {
-	this->LeftClickSelect();
+	this->CurrentPawn->LeftMouseClick();
 }
 
 void AEmulatorPlayerController::HandleRightMouseButton()
 {
-	this->RightClickInteract();
+	this->CurrentPawn->RightMouseClick();
 }
 
 void AEmulatorPlayerController::HandleMouseWheel(float Value)
