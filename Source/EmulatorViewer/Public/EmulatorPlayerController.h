@@ -9,6 +9,8 @@ class AEmulatorGodPawn;
 class UInteractableHighlighting;
 class UUserWidget;
 class IPawnInterface;
+class ABuildModePawn;
+class AEmulatorFPCharacter;
 
 UENUM()
 enum class FControlMode
@@ -59,6 +61,15 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AActor> DynamicStraightConveyorClass;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AEmulatorGodPawn> DefaultGodPawnClass;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ABuildModePawn> BuildModePawnClass;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AEmulatorFPCharacter> FirstPersonPawnClass;
 
 	AEmulatorViewerHUD* MainHUD;
 
