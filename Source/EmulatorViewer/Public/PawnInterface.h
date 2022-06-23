@@ -58,5 +58,9 @@ public:
 
 	virtual bool CurrentlyHoldingObject() { return false; }
 
-	virtual UCameraComponent* GetCamera() { return nullptr; }
+	virtual UCameraComponent* GetCamera() const { return nullptr; }
+
+	virtual FTransform GetTransform() const { return FTransform::Identity; }
+
+	virtual bool DestroyPawn(bool bNetForce = false, bool bShouldModifyLevel = true) { return false; }
 };
