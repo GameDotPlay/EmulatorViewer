@@ -7,6 +7,9 @@
 #include "DrawDebugHelpers.h"
 #include "Components/SphereComponent.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "InteractableHighlighting.h"
+#include "PopulateDetailsInterface.h"
+#include "UI/DetailsPopupWidget.h"
 
 AEmulatorGodPawn::AEmulatorGodPawn()
 {
@@ -119,6 +122,71 @@ void AEmulatorGodPawn::MouseWheelAxis(float Value)
 	}
 }
 
+void AEmulatorGodPawn::LeftMouseClick()
+{
+	FHitResult HitResult;
+	this->PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	AActor* HitActor = HitResult.GetActor();
+
+	if (this->CurrentSelection == HitActor || !IsValid(HitActor))
+	{
+		return;
+	}
+
+	if (IsValid(this->CurrentSelection))
+	{
+		// Turn off current selection highlighting.
+		UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(this->CurrentSelection);
+		if (IsValid(HighlightComponent))
+		{
+			HighlightComponent->SetSelectedDisabled();
+		}
+	}
+
+	UInteractableHighlighting* HighlightComponent = this->GetHighlightingComponent(HitActor);
+	if (IsValid(HighlightComponent))
+	{
+		HighlightComponent->SetSelectedActive();
+		this->CurrentSelection = HitActor;
+	}
+}
+
+void AEmulatorGodPawn::RightMouseClick()
+{
+	FHitResult HitResult;
+	this->PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	AActor* HitActor = HitResult.GetActor();
+
+	if (IsValid(HitActor))
+	{
+		IPopulateDetailsInterface* ActorInterface = Cast<IPopulateDetailsInterface>(HitActor);
+		if (ActorInterface)
+		{
+			ActorInterface->DetailsPopupInteract(this->PlayerController->GetMainHUD());
+		}
+	}
+}
+
+UInteractableHighlighting* AEmulatorGodPawn::GetHighlightingComponent(AActor* Actor)
+{
+	if (!IsValid(Actor))
+	{
+		return nullptr;
+	}
+
+	UActorComponent* Component = Actor->GetComponentByClass(UInteractableHighlighting::StaticClass());
+	UInteractableHighlighting* HighlightComponent = Cast<UInteractableHighlighting>(Component);
+
+	if (!IsValid(HighlightComponent))
+	{
+		return nullptr;
+	}
+	else
+	{
+		return HighlightComponent;
+	}
+}
+
 bool AEmulatorGodPawn::CurrentlyHoldingObject()
 {
 	return (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent));
@@ -126,12 +194,11 @@ bool AEmulatorGodPawn::CurrentlyHoldingObject()
 
 void AEmulatorGodPawn::FocusView()
 {
-	AActor* CurrentSelection = this->PlayerController->GetCurrentSelection();
-	if (IsValid(CurrentSelection))
+	if (IsValid(this->CurrentSelection))
 	{
 		FVector SelectionExtents;
 		FVector SelectionOrigin;
-		CurrentSelection->GetActorBounds(true, SelectionOrigin, SelectionExtents, true);
+		this->CurrentSelection->GetActorBounds(true, SelectionOrigin, SelectionExtents, true);
 		Super::SetActorLocation(SelectionOrigin);
 	}
 }
