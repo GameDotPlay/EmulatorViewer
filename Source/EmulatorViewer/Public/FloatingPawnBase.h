@@ -19,13 +19,16 @@ class EMULATORVIEWER_API AFloatingPawnBase : public APawn, public IPawnInterface
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
+
 	AFloatingPawnBase();
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual UCameraComponent* GetCamera() override { return this->Camera; }
+	virtual UCameraComponent* GetCamera() const override { return this->Camera; }
+
+	virtual FTransform GetTransform() const override { return this->GetActorTransform(); }
+
+	virtual bool DestroyPawn(bool bNetForce = false, bool bShouldModifyLevel = true) override { return this->Destroy(bNetForce, bShouldModifyLevel); }
 
 	virtual void MiddleMousePressed() override;
 
