@@ -1,6 +1,5 @@
 
 #include "EmulatorPlayerController.h"
-#include "EmulatorGodPawn.h"
 #include "InteractableHighlighting.h"
 #include "Kismet/GameplayStatics.h"
 #include "PopulateDetailsInterface.h"
@@ -9,6 +8,9 @@
 #include "UI/BuildModeUIWidget.h"
 #include "DynamicStraightConveyor.h"
 #include "Camera/CameraComponent.h"
+#include "EmulatorGodPawn.h"
+#include "BuildModePawn.h"
+#include "EmulatorFPCharacter.h"
 
 void AEmulatorPlayerController::TogglePause()
 {
@@ -119,6 +121,22 @@ void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 
 void AEmulatorPlayerController::SetObserveInteractionMode()
 {
+	if (this->CurrentInteractionMode == FInteractionMode::BuildMode)
+	{
+		APawn* GodPawn = GetWorld()->SpawnActor<AEmulatorGodPawn>(this->DefaultGodPawnClass, this->CurrentPawn->GetTransform());
+		if (IsValid(GodPawn))
+		{
+			this->UnPossess();
+			this->Possess(GodPawn);
+			this->CurrentPawn->DestroyPawn();
+			this->CurrentPawn = Cast<IPawnInterface>(this->GetPawn());
+		}
+		else
+		{
+			return;
+		}
+	}
+
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Observe Mode")));
 	this->CurrentInteractionMode = FInteractionMode::ObserveMode;
@@ -128,6 +146,22 @@ void AEmulatorPlayerController::SetObserveInteractionMode()
 
 void AEmulatorPlayerController::SetInteractInteractionMode()
 {
+	if (this->CurrentInteractionMode == FInteractionMode::BuildMode)
+	{
+		APawn* GodPawn = GetWorld()->SpawnActor<AEmulatorGodPawn>(this->DefaultGodPawnClass, this->CurrentPawn->GetTransform());
+		if (IsValid(GodPawn))
+		{
+			this->UnPossess();
+			this->Possess(GodPawn);
+			this->CurrentPawn->DestroyPawn();
+			this->CurrentPawn = Cast<IPawnInterface>(this->GetPawn());
+		}
+		else
+		{
+			return;
+		}
+	}
+
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Interact Mode")));
 	this->CurrentInteractionMode = FInteractionMode::InteractMode;
@@ -137,10 +171,27 @@ void AEmulatorPlayerController::SetInteractInteractionMode()
 
 void AEmulatorPlayerController::SetBuildInteractionMode()
 {
+	if (this->CurrentInteractionMode == FInteractionMode::BuildMode)
+	{
+		return;
+	}
+
+	APawn* BuildPawn = GetWorld()->SpawnActor<ABuildModePawn>(this->BuildModePawnClass, this->CurrentPawn->GetTransform());
+	if (IsValid(BuildPawn))
+	{
+		this->UnPossess();
+		this->Possess(BuildPawn);
+		this->CurrentPawn->DestroyPawn();
+		this->CurrentPawn = Cast<IPawnInterface>(this->GetPawn());
+	}
+	else
+	{
+		return;
+	}
+
 	this->SetInputMode(this->GetDefaultInputMode());
 	this->MainHUD->SetInteractionModeLabel(FText::FromString(TEXT("Build Mode")));
-	this->MainHUD->ShowBuildModeUI();
-	this->MainHUD->GetBuildModeUI()->GetBuildObjectsMenu()->GetCreateStraightButton()->OnClicked.AddUniqueDynamic(this, &AEmulatorPlayerController::CreateStraightConveyor);
+	//this->MainHUD->ShowBuildModeUI();
 	this->CurrentInteractionMode = FInteractionMode::BuildMode;
 	this->CurrentBuildModeState = FBuildModeState::NotBuilding;
 	this->CurrentMouseCursor = EMouseCursor::Default;
