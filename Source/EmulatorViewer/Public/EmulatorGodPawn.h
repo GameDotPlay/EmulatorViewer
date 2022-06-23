@@ -8,6 +8,9 @@
 #include "FloatingPawnBase.h"
 #include "EmulatorGodPawn.generated.h"
 
+class UInteractableHighlighting;
+class UPhysicsHandleComponent;
+
 UCLASS()
 class EMULATORVIEWER_API AEmulatorGodPawn : public AFloatingPawnBase
 {
@@ -29,6 +32,10 @@ public:
 
 	void MouseWheelAxis(float Value) override;
 
+	virtual void LeftMouseClick() override;
+
+	virtual void RightMouseClick() override;
+
 	bool CurrentlyHoldingObject() override;
 
 protected:
@@ -38,7 +45,7 @@ protected:
 private:
 
 	UPROPERTY(VisibleAnywhere)
-	class UPhysicsHandleComponent* PhysicsHandle = nullptr;
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 
 	FVector CameraTargetVector;
 
@@ -50,6 +57,8 @@ private:
 
 	float DistanceAdjustSensitivity = 1000.f;
 
+	AActor* CurrentSelection = nullptr;
+
 	void FocusView();
 
 	void Zoom(float Value);
@@ -59,4 +68,6 @@ private:
 	void GrabPhysicsObject(FHitResult HitResult);
 
 	void ReleasePhysicsObject();
+
+	UInteractableHighlighting* GetHighlightingComponent(AActor* Actor);
 };
