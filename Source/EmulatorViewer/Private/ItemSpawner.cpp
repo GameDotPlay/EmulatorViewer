@@ -4,7 +4,9 @@
 #include "TimerManager.h"
 #include "UI/DetailsPopupContentWidget.h"
 #include "Components/CheckBox.h"
+#include "UI/EmulatorViewerHUD.h"
 #include "UI/FloatInputSettingWidget.h"
+#include "UI/DetailsPopupWidget.h"
 
 // Sets default values
 AItemSpawner::AItemSpawner()
@@ -124,8 +126,12 @@ void AItemSpawner::Disable()
 	}
 }
 
-void AItemSpawner::DetailsPopupInteract(UDetailsPopupContentWidget* ContentWidget)
+void AItemSpawner::DetailsPopupInteract(AEmulatorViewerHUD* MainHUD)
 {
+	UDetailsPopupWidget* DetailsPopup = Cast<UDetailsPopupWidget>(CreateWidget(GetWorld(), this->DetailsPopupClass));
+	UDetailsPopupContentWidget* ContentWidget = DetailsPopup->GetContentWidget();
+	DetailsPopup->SetHeaderText(FText::FromString(this->GetActorNameOrLabel()));
+
 	UCheckBox* EnabledCheckBox = ContentWidget->AddCheckBoxRow(this->bEnabled, !this->bUsingGlobalSettings, FText::FromString(TEXT("Enabled")), FText::FromString(TEXT("Enable or disable this item spawner.")));
 	if (IsValid(EnabledCheckBox))
 	{
@@ -171,6 +177,11 @@ void AItemSpawner::DetailsPopupInteract(UDetailsPopupContentWidget* ContentWidge
 	if (SpawnTimerIntervalTextBox)
 	{
 		SpawnTimerIntervalTextBox->OnTextInputValidatedDelegate.AddUniqueDynamic(this, &AItemSpawner::SpawnTimerIntervalChanged);
+	}
+
+	if (IsValid(MainHUD))
+	{
+		MainHUD->AddDetailsPopup(DetailsPopup);
 	}
 }
 
