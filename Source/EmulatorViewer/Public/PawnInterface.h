@@ -28,9 +28,9 @@ public:
 
 	virtual void MiddleMouseReleased() { return; }
 
-	virtual void LeftMouseButton() { return; }
+	virtual void LeftMouseClick() { return; }
 
-	virtual void RightMouseButton() { return; }
+	virtual void RightMouseClick() { return; }
 
 	virtual void MouseXAxis(float Value) { return; }
 
