@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "UI/EmulatorViewerHUD.h"
 #include "PopulateDetailsInterface.generated.h"
-
-class UDetailsPopupContentWidget;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -24,5 +23,5 @@ class EMULATORVIEWER_API IPopulateDetailsInterface
 
 public:
 
-	virtual void DetailsPopupInteract(UDetailsPopupContentWidget* ContentWidget) { return; }
+	virtual void DetailsPopupInteract(AEmulatorViewerHUD* MainHUD) { return; }
 };
