@@ -29,14 +29,6 @@ enum class FInteractionMode
 	BuildMode = 4
 };
 
-UENUM()
-enum class FBuildModeState
-{
-	NotBuilding = 0,
-	Placing = 1,
-	Modifying = 2
-};
-
 UCLASS()
 class EMULATORVIEWER_API AEmulatorPlayerController : public APlayerController
 {
@@ -44,7 +36,7 @@ class EMULATORVIEWER_API AEmulatorPlayerController : public APlayerController
 
 public:
 
-	AActor* GetCurrentSelection() { return this->CurrentSelection; }
+	AEmulatorViewerHUD* GetMainHUD() const { return this->MainHUD; }
 
 	void TogglePause();
 
@@ -55,9 +47,6 @@ protected:
 	virtual void PlayerTick(float DeltaTime) override;
 
 private:
-
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UUserWidget> DetailsPopupClass;
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AActor> DynamicStraightConveyorClass;
@@ -73,15 +62,11 @@ private:
 
 	AEmulatorViewerHUD* MainHUD;
 
-	AActor* CurrentSelection = nullptr;
-
 	IPawnInterface* CurrentPawn = nullptr;
 
 	FControlMode CurrentControlMode;
 
 	FInteractionMode CurrentInteractionMode;
-
-	FBuildModeState CurrentBuildModeState;
 
 	FInteractionMode LastInteractionMode;
 
@@ -106,14 +91,6 @@ private:
 	void SetBuildInteractionMode();
 
 	FInputModeGameAndUI GetDefaultInputMode();
-
-	void LeftClickSelect();
-
-	void RightClickInteract();
-
-	bool MouseSelection(AActor* HitActor);
-
-	UInteractableHighlighting* GetHighlightingComponent(AActor* Actor);
 
 	void CreateStraightConveyor();
 
