@@ -7,7 +7,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "UI/InteractionModeLabelWidget.h"
-#include "UI/BuildModeUIWidget.h"
+#include "UI/BuildModeBaseUI.h"
 
 void AEmulatorViewerHUD::ShowPauseMenu()
 {
@@ -47,11 +47,18 @@ void AEmulatorViewerHUD::HideInteractionModeLabel()
 
 void AEmulatorViewerHUD::ShowBuildModeUI()
 {
-	APlayerController* PC = this->PlayerOwner;
-	this->BuildModeUIWidget = Cast<UBuildModeUIWidget>(CreateWidget(PC, this->BuildModeUIClass, FName(TEXT("BuildModeUI"))));
 	if (IsValid(this->BuildModeUIWidget))
 	{
-		this->BuildModeUIWidget->AddToViewport();
+		this->BuildModeUIWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		APlayerController* PC = this->PlayerOwner;
+		this->BuildModeUIWidget = Cast<UBuildModeBaseUI>(CreateWidget(PC, this->BuildModeUIClass, FName(TEXT("BuildModeUI"))));
+		if (IsValid(this->BuildModeUIWidget))
+		{
+			this->BuildModeUIWidget->AddToViewport();
+		}
 	}
 }
 
@@ -59,7 +66,7 @@ void AEmulatorViewerHUD::HideBuildModeUI()
 {
 	if (IsValid(this->BuildModeUIWidget))
 	{
-		this->BuildModeUIWidget->RemoveFromParent();
+		this->BuildModeUIWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
