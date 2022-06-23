@@ -12,7 +12,7 @@ class UCanvasPanel;
 class UPopupContainerWidget;
 class UCanvasPanelSlot;
 class UInteractionModeLabelWidget;
-class UBuildModeUIWidget;
+class UBuildModeBaseUI;
 
 /**
  * 
@@ -38,7 +38,7 @@ public:
 
 	void SetInteractionModeLabel(FText InteractionModeText);
 
-	UBuildModeUIWidget* GetBuildModeUI() { return this->BuildModeUIWidget; }
+	UBuildModeBaseUI* GetBuildModeUI() { return this->BuildModeUIWidget; }
 
 	void AddDetailsPopup(UDetailsPopupWidget* DetailsPopup);
 
@@ -69,7 +69,7 @@ private:
 
 	UInteractionModeLabelWidget* InteractionModeLabelWidget = nullptr;
 
-	UBuildModeUIWidget* BuildModeUIWidget = nullptr;
+	UBuildModeBaseUI* BuildModeUIWidget = nullptr;
 
 	void InitializePopupsCanvas();
 
