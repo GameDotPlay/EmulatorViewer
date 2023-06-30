@@ -18,4 +18,41 @@ Currently implemented:
 
 ### Settings
 
-### Controls
+![Settings menu](Docs/Screenshots/SettingsMenu.png "Settings menu")
+
+## Controls
+
+#### Keyboard:
+- W/Up: Move forward
+- S/Down: Move backwards
+- A/Left: Move left
+- D/Right: Move right
+- Q: Move down vertically
+- E: Move up vertically
+- F: Move focal point to the currently selected object.
+- END: Set focal point back down to floor level.
+- ESC: Pauses the sim and opens pause menu.
+- P: Pauses the sim and opens pause menu.
+- SPACE: If in Interact Mode, grabs a physics object under the cursor. Press again to release object.
+- 1: Sets Observe Mode. Default control mode, no interaction allowed.
+- 2: Sets Interact Mode. Allows interating with physics objects.
+- 3: Sets Build Mode. Allows the creation, modification, and deletion of conveyors, chutes, and other devices. (Still WIP, not implemented).
+
+#### Mouse:
+- Middle mouse hold & drag: Rotates camera aroud focal point.
+- Left mouse button: Selects an object as the current selection.
+- Right mouse button: Opens a details popup window for objects that implement it.
+- Mouse wheel scroll: If in Observe Mode, zoom camera closer/further from focal point.
+                    If in Interact Mode and holding an object, moves object further or closer to you.
+					
+#### Pause Menu:
+- Resume: Closes menu and unpauses the sim.
+- Settings: Opens a menu allowing you to change graphics settings.
+- Quit: To Main Menu exits back to the main menu.
+      To Desktop exits the program.
+	  
+#### Useful console commands: 
+Press the backtick/tilda `/~ key at any time to open the console.
+- "stat fps" Show current fps and render time in ms.
+- "t.maxfps <number>" Set a maximum fps (Use 999 to see unlocked framerate. It will be set at 120 by default.)
+- "r.setres <XPixels>x<YPixels>" Set the window resolution. (If Window Mode is set to anything other than Fullscreen in the settings menu.)
