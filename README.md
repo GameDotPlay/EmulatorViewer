@@ -13,11 +13,9 @@ Currently implemented:
  - Free movement of the camera within a scene with the ability to rotate, zoom, and snap-to focus on selected objects.
 
 ## Main Menu
-### Sandbox
+
+![The main menu](Docs/Gif/MainMenu.gif "The main menu")
+
 ### Settings
 
-## Main Scene
-
 ### Controls
-### Conveyors
-### Item Spawner
