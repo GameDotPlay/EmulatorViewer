@@ -3,6 +3,10 @@
 This is an application I developed in Unreal Engine 5.1 as a small proof of concept for a physics based emulation or HMI software to interact with a wide range of material handling systems.
 The plan for this application is to be able to serve as a simulated environment to enable automated and repeatable testing scenarios by creating models that represent material handling system layouts and devices in the field that can provide mock inputs/outputs to any controllers, as well as collection and display of any metrics/statistics relevant to the system. In addition to the emulator functionality, it could also serve in an HMI/SCADA role presenting fault and statistics data to the user and allowing supervisory control of the system to the user.
 
+**Conveyor, Sidepan, and Gravity Chute static mesh objects were created by me in Blender.**
+
+**Other objects such as the variety of objects shown on the main menu and the primary box objects in the Sandbox scene are placeholder assets from Unreal Mega Scans and are extremely high poly. They are just being used in the prototyping phase to test functionality.**
+
 The project is very early in development and still in the prototyping stage.
 
 Currently implemented:
