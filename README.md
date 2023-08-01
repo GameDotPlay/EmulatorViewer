@@ -3,19 +3,32 @@
 This is an application I developed in Unreal Engine 5.1 as a small proof of concept for a physics based emulation or HMI software to interact with a wide range of material handling systems.
 The plan for this application is to be able to serve as a simulated environment to enable automated and repeatable testing scenarios by creating models that represent material handling system layouts and devices in the field that can provide mock inputs/outputs to any controllers, as well as collection and display of any metrics/statistics relevant to the system. In addition to the emulator functionality, it could also serve in an HMI/SCADA role presenting fault and statistics data to the user and allowing supervisory control of the system to the user.
 
+### Development Environment:
+- Unreal Engine 5.1.1 (From Epic Games Launcher, not full source code)
+- Visual Studio 2022 Professional v17.6.5
+- Visual Assist v10.9.2491
+- GitHub Desktop
+
+### Coding Standards and Style Guide:
+This project adheres to the [Epic C++ Coding Standard](https://docs.unrealengine.com/5.1/en-US/epic-cplusplus-coding-standard-for-unreal-engine/).
+One addition I make to this standard is that I like to prefix all member variables and methods with `this`. When working with a codebase the size of Unreal Engine, this makes it easier to scan code and tell at a glance when something is inherited, a member, or local, etc.
+
+This project also follows Allar's [UE5 Style Guide](https://github.com/Allar/ue5-style-guide) for general folder structure and asset naming conventions except where it would directly contradict the [Epic C++ Coding Standard](https://docs.unrealengine.com/5.1/en-US/epic-cplusplus-coding-standard-for-unreal-engine/).
+
 **Conveyor, Sidepan, and Gravity Chute static mesh objects were created by me in Blender.**
 
-**Other objects such as the variety of objects shown on the main menu and the primary box objects in the Sandbox scene are placeholder assets from Unreal Mega Scans and are extremely high poly. They are just being used in the prototyping phase to test functionality.**
+**Other objects such as those seen on the main menu and the primary box objects in the Sandbox scene are *placeholder* assets from Unreal Mega Scans and are extremely high poly. They are just being used in the prototyping phase to test functionality.**
 
-The project is very early in development and still in the prototyping stage.
+**The project is very early in development and still in the prototyping stage.**
 
 Currently implemented:
+- Free movement of the camera within a scene with the ability to rotate, zoom, and snap-to focus on selected objects.
+
+![Keyboard & Mouse movement of the camera](Docs/Gif/CameraAndMovement.gif "Keyboard & Mouse movement of the camera")
+
  - Physics-based conveyor belts that correctly simulate friction locomotion of items on a conveyor belt. Straight (Level, incline, decline) and 90 degree turns available.
  - Customizable item spawner that allows the user to spawn new items onto a conveyor with a variety of settings to control the spawn rate and size of items, as well as introducing randomness to these factors.
  - "Interact Mode" which allows users to "grab" any physics item in the scene and manipulate it for finer control of placement or remove it from the system. 
- - Free movement of the camera within a scene with the ability to rotate, zoom, and snap-to focus on selected objects.
-
-![Keyboard & Mouse movement of the camera](Docs/Gif/CameraAndMovement.gif "Keyboard & Mouse movement of the camera")
 
 ## Main Menu
 
