@@ -31,7 +31,12 @@ Currently implemented:
 ![Physically correct conveyor belts](Docs/Gif/Physics.gif "Physically correct conveyor belts")
 
  - Customizable item spawner that allows the user to spawn new items onto a conveyor with a variety of settings to control the spawn rate and size of items, as well as introducing randomness to these factors.
+
+![Details popup for the ItemSpawner](Docs/Gif/DetailsPopup.gif "Details popup for the ItemSpawner")
+
  - "Interact Mode" which allows users to "grab" any physics item in the scene and manipulate it for finer control of placement or remove it from the system. 
+
+![Interaction mode](Docs/Gif/InteractMode.gif "Interaction mode")
 
 ## Main Menu
 
@@ -60,7 +65,7 @@ Currently implemented:
 - 3: Sets Build Mode. Allows the creation, modification, and deletion of conveyors, chutes, and other devices. (Still WIP, not implemented).
 
 #### Mouse:
-- Middle mouse hold & drag: Rotates camera aroud focal point.
+- Middle mouse hold & drag: Rotates camera around focal point.
 - Left mouse button: Selects an object as the current selection.
 - Right mouse button: Opens a details popup window for objects that implement it.
 - Mouse wheel scroll: If in Observe Mode, zoom camera closer/further from focal point.
