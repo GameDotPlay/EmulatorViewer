@@ -31,7 +31,7 @@ public:
 	void SetSpawner(const AItemSpawner* InSpawner) { this->Spawner = InSpawner; }
 
 	/** Gets a reference to the AItemSpawner that spawned this item. */
-	const AItemSpawner* GetParent() const { return this->Spawner; }
+	const AItemSpawner* GetSpawner() const { return this->Spawner; }
 
 private:
 
