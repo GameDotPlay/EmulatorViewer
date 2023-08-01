@@ -30,7 +30,7 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* SceneRoot = nullptr;
 	
-	/** The primary surface that physics will be applied to. */
+	/** The physical surface that conveys physics items. */
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PhysicsMesh = nullptr;
 
