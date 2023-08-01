@@ -73,7 +73,7 @@ void AItemSpawner::SpawnItem()
 		{
 			this->NumberOfSpawnedItems++;
 			this->OwnedItems.Emplace(ItemSpawned);
-			ItemSpawned->SetParent(this);
+			ItemSpawned->SetSpawner(this);
 		}
 	}
 }
