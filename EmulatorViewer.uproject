@@ -189,5 +189,8 @@
 			"Name": "XGEController",
 			"Enabled": false
 		}
+	],
+	"TargetPlatforms": [
+		"Windows"
 	]
 }
