@@ -27,6 +27,9 @@ Currently implemented:
 ![Keyboard & Mouse movement of the camera](Docs/Gif/CameraAndMovement.gif "Keyboard & Mouse movement of the camera")
 
  - Physics-based conveyor belts that correctly simulate friction locomotion of items on a conveyor belt. Straight (Level, incline, decline) and 90 degree turns available.
+
+![Physically correct conveyor belts](Docs/Gif/Physics.gif "Physically correct conveyor belts")
+
  - Customizable item spawner that allows the user to spawn new items onto a conveyor with a variety of settings to control the spawn rate and size of items, as well as introducing randomness to these factors.
  - "Interact Mode" which allows users to "grab" any physics item in the scene and manipulate it for finer control of placement or remove it from the system. 
 
