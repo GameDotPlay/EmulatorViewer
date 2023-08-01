@@ -1,10 +1,10 @@
 /*****************************************************************//**
  * @file   Item.h
- * @brief  Class file for an Item.
+ * @brief  Class file for Item.
  * 
  * @author erich.smith
- * @date   July 2023
- *********************************************************************/
+ * @date   July 31, 2023
+ *  *********************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
