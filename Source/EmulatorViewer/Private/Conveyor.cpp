@@ -1,6 +1,16 @@
-
+/*****************************************************************//**
+ * @file   Conveyor.cpp
+ * @brief  Implementation file for Conveyor.
+ * 
+ * @author Erich Smith
+ * @date   August 01, 2023
+ *  *********************************************************************/
 #include "Conveyor.h"
 
+/**
+ * The default constructor.
+ * Initializes all mesh references and sets up the transform hierarchy.
+ */
 AConveyor::AConveyor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -23,14 +33,4 @@ AConveyor::AConveyor()
 
 	this->SidePanR = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SidePanR"));
 	this->SidePanR->SetupAttachment(this->RootComponent);
-}
-
-void AConveyor::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AConveyor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
