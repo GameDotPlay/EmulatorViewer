@@ -1,3 +1,10 @@
+/*****************************************************************//**
+ * @file   BuildModePawn.h
+ * @brief  Class file for BuildModePwn
+ * 
+ * @author Erich Smith
+ * @date   August 01, 2023
+ *********************************************************************/
 #pragma once
 
 #include "CoreMinimal.h"
