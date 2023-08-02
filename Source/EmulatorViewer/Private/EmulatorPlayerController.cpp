@@ -1,4 +1,10 @@
-
+/*****************************************************************//**
+ * @file   EmulatorPlayerController.cpp
+ * @brief  Implementation file for EmulatorPlayerController.
+ * 
+ * @author Erich Smith
+ * @date   August 02, 2023
+ *********************************************************************/
 #include "EmulatorPlayerController.h"
 #include "InteractableHighlighting.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,13 +18,16 @@
 #include "BuildModePawn.h"
 #include "EmulatorFPCharacter.h"
 
+/**
+ * Toggle the pause state.
+ */
 void AEmulatorPlayerController::TogglePause()
 {
 	if (GetWorld()->IsPaused())
 	{
 		this->SetPause(false);
-		this->ChangeInteractionMode(this->LastInteractionMode);
 		this->MainHUD->HidePauseMenu();
+		this->ChangeInteractionMode(this->LastInteractionMode);
 	}
 	else
 	{
@@ -29,6 +38,9 @@ void AEmulatorPlayerController::TogglePause()
 	}
 }
 
+/**
+ * Called after all initialization and before the first Tick().
+ */
 void AEmulatorPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -43,11 +55,9 @@ void AEmulatorPlayerController::BeginPlay()
 	this->SetObserveInteractionMode();
 }
 
-void AEmulatorPlayerController::PlayerTick(float DeltaTime)
-{
-	Super::PlayerTick(DeltaTime);
-}
-
+/**
+ * Toggle the current control mode between first person and god mode.
+ */
 void AEmulatorPlayerController::ToggleControlMode()
 {
 	switch (this->CurrentControlMode)
@@ -67,6 +77,9 @@ void AEmulatorPlayerController::ToggleControlMode()
 	}
 }
 
+/**
+ * Set the InteractionMode to the new mode given.
+ */
 void AEmulatorPlayerController::ChangeInteractionMode(FInteractionMode NewInteractionMode)
 {
 	switch (NewInteractionMode)
@@ -103,6 +116,9 @@ void AEmulatorPlayerController::ChangeInteractionMode(FInteractionMode NewIntera
 	}
 }
 
+/**
+ * Set the InteractionMode to FullMenu.
+ */
 void AEmulatorPlayerController::SetFullMenuInteractionMode()
 {
 	this->SetInputMode(FInputModeUIOnly());
@@ -110,6 +126,9 @@ void AEmulatorPlayerController::SetFullMenuInteractionMode()
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
+/**
+ * Set the InteractionMode to Popup.
+ */
 void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 {
 	this->SetInputMode(this->GetDefaultInputMode());
@@ -117,6 +136,9 @@ void AEmulatorPlayerController::SetPopupMenuInteractionMode()
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
+/**
+ * Set the InteractionMode to Observe.
+ */
 void AEmulatorPlayerController::SetObserveInteractionMode()
 {
 	if (this->CurrentInteractionMode == FInteractionMode::BuildMode)
@@ -142,6 +164,9 @@ void AEmulatorPlayerController::SetObserveInteractionMode()
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
+/**
+ * Set the InteractionMode to Interact.
+ */
 void AEmulatorPlayerController::SetInteractInteractionMode()
 {
 	if (this->CurrentInteractionMode == FInteractionMode::BuildMode)
@@ -167,6 +192,9 @@ void AEmulatorPlayerController::SetInteractInteractionMode()
 	this->CurrentMouseCursor = EMouseCursor::GrabHand;
 }
 
+/**
+ * Set the InteractionMode to Build.
+ */
 void AEmulatorPlayerController::SetBuildInteractionMode()
 {
 	if (this->CurrentInteractionMode == FInteractionMode::BuildMode)
@@ -194,6 +222,9 @@ void AEmulatorPlayerController::SetBuildInteractionMode()
 	this->CurrentMouseCursor = EMouseCursor::Default;
 }
 
+/**
+ * Get the default input mode.
+ */
 FInputModeGameAndUI AEmulatorPlayerController::GetDefaultInputMode()
 {
 	FInputModeGameAndUI InputMode = FInputModeGameAndUI();
@@ -202,6 +233,9 @@ FInputModeGameAndUI AEmulatorPlayerController::GetDefaultInputMode()
 	return InputMode;
 }
 
+/**
+ * Bind inputs to actions.
+ */
 void AEmulatorPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -230,6 +264,9 @@ void AEmulatorPlayerController::SetupInputComponent()
 	this->InputComponent->BindAxis("MouseY", this, &AEmulatorPlayerController::HandleMouseYAxis);
 }
 
+/**
+ * Spawn a new DynamicStraightConveyor.
+ */
 void AEmulatorPlayerController::CreateStraightConveyor()
 {
 	// Spawn dynamic straight conveyor.
@@ -240,24 +277,24 @@ void AEmulatorPlayerController::CreateStraightConveyor()
 	if (IsValid(Conveyor))
 	{
 		// Set position to floor. Follow mouse cursor.
-		if (1)
+		FVector WorldLocation;
+		FVector WorldDirection;
+		this->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+		FHitResult OutHit;
+		FVector TraceStart = this->CurrentPawn->GetCamera()->GetComponentLocation();
+		FVector TraceEnd = WorldLocation + (WorldDirection * 10000);
+		FCollisionQueryParams CollisionParams;
+		GetWorld()->LineTraceSingleByProfile(OutHit, TraceStart, TraceEnd, FName(TEXT("Floor")), CollisionParams);
+		if (IsValid(OutHit.GetActor()))
 		{
-			FVector WorldLocation;
-			FVector WorldDirection;
-			this->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-			FHitResult OutHit;
-			FVector TraceStart = this->CurrentPawn->GetCamera()->GetComponentLocation();
-			FVector TraceEnd = WorldLocation + (WorldDirection * 10000);
-			FCollisionQueryParams CollisionParams;
-			GetWorld()->LineTraceSingleByProfile(OutHit, TraceStart, TraceEnd, FName(TEXT("Floor")), CollisionParams);
-			if (IsValid(OutHit.GetActor()))
-			{
-
-			}
+			// TODO.
 		}
 	}
 }
 
+/**
+ * Set the ControlMode to GodMode.
+ */
 void AEmulatorPlayerController::SetGodControlMode()
 {
 	this->bShowMouseCursor = true;
@@ -268,6 +305,9 @@ void AEmulatorPlayerController::SetGodControlMode()
 	this->CurrentControlMode = FControlMode::GodMode;
 }
 
+/**
+ * Set the ControlMode to FirstPersonMode.
+ */
 void AEmulatorPlayerController::SetFirstPersonControlMode()
 {
 	this->bShowMouseCursor = false;
@@ -278,91 +318,145 @@ void AEmulatorPlayerController::SetFirstPersonControlMode()
 	this->CurrentControlMode = FControlMode::FirstPerson;
 }
 
+/**
+ * Process keyboard input.
+ */
 void AEmulatorPlayerController::HandleKeyboard1()
 {
 	this->ChangeInteractionMode(FInteractionMode::ObserveMode);
 }
 
+/**
+ * Process keyboard input.
+ */
 void AEmulatorPlayerController::HandleKeyboard2()
 {
 	this->ChangeInteractionMode(FInteractionMode::InteractMode);
 }
 
+/**
+ * Process keyboard input.
+ */
 void AEmulatorPlayerController::HandleKeyboard3()
 {
 	this->ChangeInteractionMode(FInteractionMode::BuildMode);
 }
 
+/**
+ * Send keyboard input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleKeyboardF()
 {
 	this->CurrentPawn->KeyboardF();
 }
 
+/**
+ * Send keyboard input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleKeyboardE()
 {
 	this->CurrentPawn->KeyboardE();
 }
 
+/**
+ * Send keyboard input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleKeyboardSPACE()
 {
 	this->CurrentPawn->KeyboardSPACE();
 }
 
+/**
+ * Send keyboard input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleKeyboardEND()
 {
 	this->CurrentPawn->KeyboardEND();
 }
 
+/**
+ * Send keyboard input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleKeyboardESC()
 {
 	this->CurrentPawn->KeyboardESC();
 }
 
+/**
+ * Send mouse input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleMiddleMouseButtonPressed()
 {
 	this->CurrentPawn->MiddleMousePressed();
 }
 
+/**
+ * Send mouse input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleMiddleMouseButtonReleased()
 {
 	this->CurrentPawn->MiddleMouseReleased();
 }
 
+/**
+ * Send mouse input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleLeftMouseButton()
 {
 	this->CurrentPawn->LeftMouseClick();
 }
 
+/**
+ * Send mouse input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleRightMouseButton()
 {
 	this->CurrentPawn->RightMouseClick();
 }
 
+/**
+ * Send mouse input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleMouseWheel(float Value)
 {
 	this->CurrentPawn->MouseWheelAxis(Value);
 }
 
+/**
+ * Send mouse input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleMouseXAxis(float Value)
 {
 	this->CurrentPawn->MouseXAxis(Value);
 }
 
+/**
+ * Send mouse input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleMouseYAxis(float Value)
 {
 	this->CurrentPawn->MouseYAxis(Value);
 }
 
+/**
+ * Send mouse input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleForwardAxis(float Value)
 {
 	this->CurrentPawn->MoveForward(Value);
 }
 
+/**
+ * Send axis input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleRightAxis(float Value)
 {
 	this->CurrentPawn->MoveRight(Value);
 }
 
+/**
+ * Send axis input to the CurrentPawn.
+ */
 void AEmulatorPlayerController::HandleUpAxis(float Value)
 {
 	this->CurrentPawn->MoveUp(Value);
