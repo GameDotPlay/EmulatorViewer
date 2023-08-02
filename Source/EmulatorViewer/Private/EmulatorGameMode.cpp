@@ -1,8 +1,10 @@
+/*****************************************************************//**
+ * @file   EmulatorGameMode.cpp
+ * @brief  Implementation file for EmulatorGameMode.
+ * 
+ * @author Erich Smith
+ * @date   August 01, 2023
+ *  *********************************************************************/
 
 #include "EmulatorGameMode.h"
-#include "EmulatorPlayerController.h"
 
-void AEmulatorGameMode::BeginPlay()
-{
-	Super::BeginPlay();
-}
