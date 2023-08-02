@@ -1,9 +1,18 @@
-
+/*****************************************************************//**
+ * @file   EmulatorFPCharacter.cpp
+ * @brief  Implementation file for EmulatorFPCharacter.
+ * 
+ * @author Erich Smith
+ * @date   August 01, 2023
+ *  *********************************************************************/
 #include "EmulatorFPCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-// Sets default values
+/**
+ * The default constructor.
+ * Initializes any default values and sets transform hierarchy.
+ */
 AEmulatorFPCharacter::AEmulatorFPCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -13,7 +22,9 @@ AEmulatorFPCharacter::AEmulatorFPCharacter()
 	this->Camera->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
+/**
+ * UnrealEngine BeginPlay() method. Gets called after all initialization and before the first Tick().
+ */
 void AEmulatorFPCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -21,14 +32,10 @@ void AEmulatorFPCharacter::BeginPlay()
 	this-> OriginalWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
-// Called every frame
-void AEmulatorFPCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
+/**
+* Binds player input to actions.
+* @param PlayerInputComponent The PlayerInputComponent to bind inputs to.
+*/
 void AEmulatorFPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -40,31 +47,49 @@ void AEmulatorFPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("MouseY", this, &AEmulatorFPCharacter::AddPitch);
 
 	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Pressed, this, &AEmulatorFPCharacter::DoubleSpeed);
-	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Released, this, &AEmulatorFPCharacter::NormalSpeed);
+	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Released, this, &AEmulatorFPCharacter::ResetNormalSpeed);
 }
 
+/**
+ * Adds movement input in the Actor forward vector direction.
+ * @param Value The value to add.
+ */
 void AEmulatorFPCharacter::MoveForward(float Value)
 {
 	AddMovementInput(GetActorForwardVector(), Value);
 }
 
+/**
+ * Adds movement input in the Actor right vector direction.
+ * @param Value The value to add.
+ */
 void AEmulatorFPCharacter::StrafeRight(float Value)
 {
 	AddMovementInput(GetActorRightVector(), Value);
 }
 
+/**
+ * Adds controller pitch input.
+ * @param Value The value to add.
+ */
 void AEmulatorFPCharacter::AddPitch(float Value)
 {
 	// Inverted Y axis hard coded.
 	AddControllerPitchInput(-Value);
 }
 
+/**
+ * Doubles the MaxWalkSpeed of the CharacterMovementComponent.
+ */
 void AEmulatorFPCharacter::DoubleSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed *= 2;
 }
 
-void AEmulatorFPCharacter::NormalSpeed()
+/**
+ * Resets the MaxWalkSpeed of the CharacterMovementComponent back to OriginalWalkSpeed.
+ */
+void AEmulatorFPCharacter::ResetNormalSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed = this->OriginalWalkSpeed;
 }
