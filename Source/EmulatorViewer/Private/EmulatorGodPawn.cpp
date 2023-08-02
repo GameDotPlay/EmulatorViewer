@@ -1,4 +1,10 @@
-
+/*****************************************************************//**
+ * @file   EmulatorGodPawn.cpp
+ * @brief  Implementation file for EmulatorGodPawn.
+ * 
+ * @author Erich Smith
+ * @date   August 01, 2023
+ *  *********************************************************************/
 #include "EmulatorGodPawn.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -11,6 +17,10 @@
 #include "PopulateDetailsInterface.h"
 #include "UI/DetailsPopupWidget.h"
 
+/**
+ * The default constructor.
+ * Initializes any default values.
+ */
 AEmulatorGodPawn::AEmulatorGodPawn()
 {
 	this->PhysicsHandle = Super::CreateDefaultSubobject<UPhysicsHandleComponent>("PhysicsHandle");
@@ -22,11 +32,10 @@ AEmulatorGodPawn::AEmulatorGodPawn()
 	PhysicsHandle->InterpolationSpeed = 17.f;
 }
 
-void AEmulatorGodPawn::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
+/**
+ * Called once per frame.
+ * @param DeltaTime The time in ms since the last frame.
+ */
 void AEmulatorGodPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -41,11 +50,19 @@ void AEmulatorGodPawn::Tick(float DeltaTime)
 	}
 }
 
+/**
+ * The F key has been pressed.
+ * Snap the focal point to the currently selected item.
+ */
 void AEmulatorGodPawn::KeyboardF()
 {
 	this->FocusView();
 }
 
+/**
+ * Test for a valid physics object under the cursor and grab it.
+ * @param HitResult The FHitResult returned from the object under the cursor.
+ */
 void AEmulatorGodPawn::GrabPhysicsObject(FHitResult HitResult)
 {
 	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
@@ -67,6 +84,9 @@ void AEmulatorGodPawn::GrabPhysicsObject(FHitResult HitResult)
 	this->PlayerController->CurrentMouseCursor = EMouseCursor::GrabHandClosed;
 }
 
+/**
+ * Release the currently held physics object.
+ */
 void AEmulatorGodPawn::ReleasePhysicsObject()
 {
 	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
@@ -76,16 +96,28 @@ void AEmulatorGodPawn::ReleasePhysicsObject()
 	}
 }
 
+/**
+ * The END key has been pressed.
+ * Reset the focal point down to floor level.
+ */
 void AEmulatorGodPawn::KeyboardEND()
 {
 	Super::SetActorLocation(FVector(Super::GetActorLocation().X, Super::GetActorLocation().Y, this->FloorZ + this->FloorZOffset));
 }
 
+/**
+ * The ESC key has been pressed.
+ * Pause the sim and open the pause menu.
+ */
 void AEmulatorGodPawn::KeyboardESC()
 {
 	this->PlayerController->TogglePause();
 }
 
+/**
+ * The SPACE key has been pressed.
+ * Either grab or release a physics object under the cursor.
+ */
 void AEmulatorGodPawn::KeyboardSPACE()
 {
 	// If already holding something, release it.
@@ -110,6 +142,11 @@ void AEmulatorGodPawn::KeyboardSPACE()
 	}
 }
 
+/**
+ * The mouse wheel has been scrolled.
+ * Either zoom the camera or move the currently held physics item further away/closer to the camera.
+ * @param Value The value the mouse wheel has moved.
+ */
 void AEmulatorGodPawn::MouseWheelAxis(float Value)
 {
 	if (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent))
@@ -122,6 +159,10 @@ void AEmulatorGodPawn::MouseWheelAxis(float Value)
 	}
 }
 
+/**
+ * The left mouse button has been clicked.
+ * Test for a valid object under the cursor and set it as the currently selected object.
+ */
 void AEmulatorGodPawn::LeftMouseClick()
 {
 	FHitResult HitResult;
@@ -151,6 +192,10 @@ void AEmulatorGodPawn::LeftMouseClick()
 	}
 }
 
+/**
+ * The right mouse button has been clicked.
+ * Open the details pop up if the object implements it.
+ */
 void AEmulatorGodPawn::RightMouseClick()
 {
 	FHitResult HitResult;
@@ -167,6 +212,11 @@ void AEmulatorGodPawn::RightMouseClick()
 	}
 }
 
+/**
+ * Get the InteractableHighlighting component of the actor that was clicked.
+ * @param Actor The Actor that was clicked.
+ * @return The InteractableHighlighting component of the Actor that was clicked. If it exists.
+ */
 UInteractableHighlighting* AEmulatorGodPawn::GetHighlightingComponent(AActor* Actor)
 {
 	if (!IsValid(Actor))
@@ -187,11 +237,17 @@ UInteractableHighlighting* AEmulatorGodPawn::GetHighlightingComponent(AActor* Ac
 	}
 }
 
+/**
+ * Is a physics object currently being held?
+ */
 bool AEmulatorGodPawn::CurrentlyHoldingObject()
 {
 	return (IsValid(this->PhysicsHandle) && IsValid(this->PhysicsHandle->GrabbedComponent));
 }
 
+/**
+ * Snap the focal point to the currently selected object, if valid.
+ */
 void AEmulatorGodPawn::FocusView()
 {
 	if (IsValid(this->CurrentSelection))
@@ -203,6 +259,10 @@ void AEmulatorGodPawn::FocusView()
 	}
 }
 
+/**
+ * Zoom the camera closer or further away from the focal point.
+ * @param Value
+ */
 void AEmulatorGodPawn::Zoom(float Value)
 {
 	this->SpringArm->TargetArmLength -= Value * Super::GetWorld()->GetDeltaSeconds() * this->MouseWheelSensitivity;
@@ -217,6 +277,10 @@ void AEmulatorGodPawn::Zoom(float Value)
 	}
 }
 
+/**
+ * Move the currently held physics object further away or closer to the camera.
+ * @param Value The value to move the object.
+ */
 void AEmulatorGodPawn::PhysicsObjectDistanceAdjust(float Value)
 {
 	this->CameraTargetVectorLength += Value * Super::GetWorld()->GetDeltaSeconds() * this->DistanceAdjustSensitivity;
