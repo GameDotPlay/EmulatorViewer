@@ -1,8 +1,18 @@
-
+/*****************************************************************//**
+ * @file   DynamicStraightConveyor.cpp
+ * @brief  Implementation file for DynamicStraightConveyor.
+ * 
+ * @author Erich Smith
+ * @date   August 01, 2023
+ *  *********************************************************************/
 #include "DynamicStraightConveyor.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 
+/**
+ * The default constructor.
+ * Initializes all mesh references and sets up the transform hierarchy.
+ */
 ADynamicStraightConveyor::ADynamicStraightConveyor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -64,16 +74,4 @@ ADynamicStraightConveyor::ADynamicStraightConveyor()
 
 	this->ItemSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Item Spawn Point"));
 	this->ItemSpawnPoint->SetupAttachment(this->RootComponent);
-}
-
-void ADynamicStraightConveyor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-void ADynamicStraightConveyor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
