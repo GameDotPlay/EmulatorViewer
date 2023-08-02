@@ -30,23 +30,23 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* SceneRoot = nullptr;
 	
-	/** The physical surface that conveys physics items. */
+	/** The physical surface that conveys physics items. Set mesh in editor. */
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PhysicsMesh = nullptr;
 
-	/** Mesh that covers the hollow right side of a conveyor belt PhysicsMesh. */
+	/** Mesh that covers the hollow right side of a conveyor belt PhysicsMesh. Set mesh in editor. */
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SideStructR = nullptr;
 
-	/** Mesh that covers the hollow left side of a conveyor belt PhysicsMesh.. */
+	/** Mesh that covers the hollow left side of a conveyor belt PhysicsMesh.Set mesh in editor. */
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SideStructL = nullptr;
 
-	/** Optional side wall for a conveyor that keeps items from leaving the surface. */
+	/** Optional side wall for a conveyor that keeps items from leaving the surface. Set mesh in editor. */
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SidePanR = nullptr;
 
-	/** Optional side wall for a conveyor that keeps items from leaving the surface. */
+	/** Optional side wall for a conveyor that keeps items from leaving the surface. Set mesh in editor. */
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SidePanL = nullptr;
 };
